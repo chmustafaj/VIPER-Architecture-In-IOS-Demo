@@ -10,8 +10,19 @@ import Alamofire
 
 class CloudViewController: UIViewController {
   // MARK: - Variables
-  private var todos = [Todo]()
+  var presentor: CloudViewToPresenterProtocol?
+
+  private var todos = [ToDoModel]()
   // MARK: - UI Elements
+  
+  lazy var activityIndicator: UIActivityIndicatorView = {
+    var i = UIActivityIndicatorView()
+    i = UIActivityIndicatorView(style: .large)
+    i.center = view.center
+    i.hidesWhenStopped = true
+    return i
+  }()
+  
   private let tableView: UITableView = {
     let tb = UITableView()
     tb.backgroundColor = .systemBackground
@@ -24,16 +35,17 @@ class CloudViewController: UIViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
-    getTodos()
+    
     setupUI()
     setupTableView()
-    
+    presentor?.startFetchingToDos()
+    showProgressIndicator()
   }
   
   // MARK: - Methods
   func setupUI() {
     self.view.addSubview(tableView)
-    
+    view.addSubview(activityIndicator)
     NSLayoutConstraint.activate([
       tableView.topAnchor.constraint(equalTo: self.view.topAnchor),
       tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
@@ -49,41 +61,33 @@ class CloudViewController: UIViewController {
     self.tableView.dataSource = self
   }
   
-  func getTodos() {
-    NetworkingClient.shared.fetchTodos { [weak self] result in
-      switch result {
-      case .success(let todos):
-        self?.todos = todos
-        print(todos)
-        DispatchQueue.main.async {
-          self?.tableView.reloadData()
-        }
-      case .failure(let error):
-        print("Failed to fetch todos:", error)
-      }
+  private func showProgressIndicator() {
+    activityIndicator.startAnimating()
+  }
+  
+  private func hideProgressIndicator() {
+    activityIndicator.stopAnimating()
+  }
+  
+}
+
+extension CloudViewController: CloudPresenterToViewProtocol {
+  func showToDos(tasksArray: Array<ToDoModel>) {
+    self.todos = tasksArray
+    print(todos)
+    DispatchQueue.main.async {
+      self.tableView.reloadData()
+      self.hideProgressIndicator()
     }
   }
   
-  func updateTodoCompletion(todo: Todo, completion: @escaping (Result<Todo, Error>) -> Void) {
-    let url = "https://dummyjson.com/todos/\(todo.id)"
-    let parameters: [String: Any] = [
-      "completed": todo.completed
-    ]
-    
-    AF.request(url, method: .patch, parameters: parameters, encoding: JSONEncoding.default)
-      .responseDecodable(of: Todo.self) { response in
-        switch response.result {
-        case .success(let updatedTodo):
-          completion(.success(updatedTodo))
-        case .failure(let error):
-          completion(.failure(error))
-        }
-      }
+  func showError(error: AFError) {
+    print("Failed to fetch todos:", error)
+    hideProgressIndicator()
   }
   
   
 }
-
 extension CloudViewController: UITableViewDelegate, UITableViewDataSource, TaskCellDelegate {
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     return self.todos.count
@@ -92,31 +96,16 @@ extension CloudViewController: UITableViewDelegate, UITableViewDataSource, TaskC
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     let cell = tableView.dequeueReusableCell(withIdentifier: TaskCell.identifier, for: indexPath) as? TaskCell
     cell!.label.text = todos[indexPath.row].todo
-    cell!.checkBox.isChecked = todos[indexPath.row].completed
+    cell!.checkBox.isChecked = todos[indexPath.row].isComplete
     cell!.delegate = self
     return cell!
   }
   
-  func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-    if editingStyle == .delete {
-      let taskToDelete = todos[indexPath.row]
-      //deleteItem(item: taskToDelete)
-      todos.remove(at: indexPath.row)
-      tableView.deleteRows(at: [indexPath], with: .automatic)
-    }
-  }
+
   
   func taskCell(_ cell: TaskCell, didChangeCheckboxState: Bool) {
     guard let indexPath = tableView.indexPath(for: cell) else { return }
     var task = todos[indexPath.row]
-    task.completed = didChangeCheckboxState
-    updateTodoCompletion(todo: task) { result in
-      switch result {
-      case .success(let updatedTodo):
-        print("Updated Todo: \(updatedTodo)")
-      case .failure(let error):
-        print("Failed to update Todo: \(error.localizedDescription)")
-      }
-    }
+    task.isComplete = didChangeCheckboxState
   }
 }

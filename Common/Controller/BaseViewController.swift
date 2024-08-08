@@ -40,7 +40,9 @@ class BaseViewController: UIViewController, TabViewDelegate, ListViewDelegate {
   override func viewDidLoad() {
     super.viewDidLoad()
     setupViews()
-    homeViewController.delegate = self // Set the delegate here
+    homeViewController.delegate = self
+    setupCloudAndHomeViewController()
+    
   }
   
   // MARK: - Methods
@@ -80,6 +82,19 @@ class BaseViewController: UIViewController, TabViewDelegate, ListViewDelegate {
     viewController.didMove(toParent: self)
   }
   
+  // TODO: Add in router
+  func setupCloudAndHomeViewController() {
+
+    let presenter: CloudViewToPresenterProtocol & CloudInteractorToPresenterProtocol = CloudPresenter()
+    let interactor: CloudPresenterToInteractorProtocol = CloudInteractor()
+   // let router:CloudPresenterToRouterProtocol = CloudRouter()
+    
+    cloudViewController.presentor = presenter
+    presenter.view = cloudViewController
+    //presenter.router = router
+    presenter.interactor = interactor
+    interactor.presenter = presenter
+  }
   func tabView(_ tabView: TabView, didSelectItemAt index: Int) {
     switch index {
     case 0:

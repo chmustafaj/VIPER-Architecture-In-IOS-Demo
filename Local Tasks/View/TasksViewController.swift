@@ -9,13 +9,21 @@ import UIKit
 
 class TasksViewController: UIViewController {
   
-  var presentor:ViewToPresenterProtocol?
+  var presentor:LocalViewToPresenterProtocol?
   // MARK: - Variables
   let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
   private var tasks = [Task]()
   let list: Group?
   
   // MARK: - UI Elements
+  lazy var activityIndicator: UIActivityIndicatorView = {
+    var i = UIActivityIndicatorView()
+    i = UIActivityIndicatorView(style: .large)
+    i.center = view.center
+    i.hidesWhenStopped = true
+    return i
+  }()
+  
   private let tableView: UITableView = {
     let tb = UITableView()
     tb.backgroundColor = .systemBackground
@@ -24,11 +32,10 @@ class TasksViewController: UIViewController {
     tb.translatesAutoresizingMaskIntoConstraints = false
     return tb
   }()
-  // TODO:
-//  private lazy var btnAdd: UIBarButtonItem = {
-//    let btn = UIBarButtonItem(title: "Add", style: .plain, target: self, action: #selector(presentEntryViewController))
-//    return btn
-//  }()
+  private lazy var btnAdd: UIBarButtonItem = {
+    let btn = UIBarButtonItem(title: "Add", style: .plain, target: self, action: #selector(presentEntryViewController))
+    return btn
+  }()
   var tasksArrayList:Array<Task> = Array()
   
   init(models: [Group] = [Group](), list: Group?) {
@@ -45,11 +52,10 @@ class TasksViewController: UIViewController {
     setupTableView()
     setupUI()
     self.title = "Tasks"
-    presentor?.startFetchingToDos()
-    //showProgressIndicator(view: self.view)
     
-    //        uiTableView.delegate = self
-    //        uiTableView.dataSource = self
+    presentor?.startFetchingToDos(selectedList: list!)
+    showProgressIndicator()
+    
     
   }
   private func setupTableView() {
@@ -61,8 +67,9 @@ class TasksViewController: UIViewController {
     self.title = "Tasks"
     self.view.backgroundColor = .systemBackground
     self.view.addSubview(tableView)
-    // TODO: 
-    //navigationItem.rightBarButtonItem = btnAdd
+    view.addSubview(activityIndicator)
+    
+    navigationItem.rightBarButtonItem = btnAdd
     
     NSLayoutConstraint.activate([
       tableView.topAnchor.constraint(equalTo: self.view.topAnchor),
@@ -73,48 +80,49 @@ class TasksViewController: UIViewController {
     ])
   }
   
-//    private func deleteItem(item: Task) {
-//      context.delete(item)
-//      do{
-//        try context.save()
-//      }
-//      catch {
-//        print("error saving")
-//      }
-//  
-//    }
+  @objc func presentEntryViewController() {
+    let entryVC = LocalRouter.createEntryModule(listToAddTaskTo: list!)
+    entryVC.update = {
+      self.presentor?.startFetchingToDos(selectedList: self.list!)
+      DispatchQueue.main.async {
+        self.tableView.reloadData()
+      }
+    }
+    let navController = UINavigationController(rootViewController: entryVC)
+    navController.modalPresentationStyle = .fullScreen
+    present(navController, animated: true, completion: nil)
+  }
   
-  //  @objc func presentEntryViewController() {
-  //    let entryVC = EntryViewController(list: list!)
-  //    entryVC.update = {
-  //      self.getAllItems()
-  //      DispatchQueue.main.async {
-  //        self.tableView.reloadData()
-  //      }
-  //    }
-  //    let navController = UINavigationController(rootViewController: entryVC)
-  //    navController.modalPresentationStyle = .fullScreen
-  //    present(navController, animated: true, completion: nil)
-  //  }
+  
 }
 
-extension TasksViewController:PresenterToViewProtocol{
+extension TasksViewController:LocalPresenterToViewProtocol{
   func showTasks(tasksArray: Array<Task>) {
-    tasks = tasksArray.filter({ $0.group == list})
+    print("List: \(String(describing: list))")
+    print("Tasks: \(String(describing: tasksArray))")
+    tasks = tasksArray
     
     
     DispatchQueue.main.async {
       self.tableView.reloadData()
+      self.hideProgressIndicator()
+
       
     }
   }
   
   func showError() {
     debugPrint("Error")
-   // hideProgressIndicator(view: self.view)
-//    let alert = UIAlertController(title: "Alert", message: "Problem Fetching Tasks", preferredStyle: UIAlertControllerStyle.alert)
-//    alert.addAction(UIAlertAction(title: "Okay", style: UIAlertActionStyle.default, handler: nil))
-//    self.present(alert, animated: true, completion: nil)
+    hideProgressIndicator()
+    
+  }
+  
+  private func showProgressIndicator() {
+    activityIndicator.startAnimating()
+  }
+  
+  private func hideProgressIndicator() { 
+    activityIndicator.stopAnimating()
     
   }
   
@@ -134,25 +142,19 @@ extension TasksViewController: UITableViewDelegate, UITableViewDataSource, TaskC
     cell!.delegate = self
     return cell!
   }
-  // TODO: Add delete feature
-//  func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-//    if editingStyle == .delete {
-//      let taskToDelete = tasks[indexPath.row]
-//      deleteItem(item: taskToDelete)
-//      tasks.remove(at: indexPath.row)
-//      tableView.deleteRows(at: [indexPath], with: .automatic)
-//    }
-//  }
+  func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+    if editingStyle == .delete {
+      let taskToDelete = tasks[indexPath.row]
+      presentor?.deleteItemRequested(itemToDelete: taskToDelete)
+      tasks.remove(at: indexPath.row)
+      tableView.deleteRows(at: [indexPath], with: .automatic)
+    }
+  }
   
   func taskCell(_ cell: TaskCell, didChangeCheckboxState: Bool) {
     guard let indexPath = tableView.indexPath(for: cell) else { return }
     let task = tasks[indexPath.row]
-    task.isComplete = didChangeCheckboxState
-    do {
-      try context.save()
-    } catch {
-      print("Failed to save task")
-    }
+    presentor?.toggleTaskIsCompleteRequest(taskToToggle: task, isComplete: didChangeCheckboxState)
   }
   
 }

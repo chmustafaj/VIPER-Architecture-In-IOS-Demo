@@ -6,35 +6,35 @@
 //
 
 import Foundation
-protocol ViewToPresenterProtocol: AnyObject{
+protocol LocalViewToPresenterProtocol: AnyObject{
   
-  var view: PresenterToViewProtocol? {get set}
-  var interactor: PresenterToInteractorProtocol? {get set}
-  var router: PresenterToRouterProtocol? {get set}
+  var view: LocalPresenterToViewProtocol? {get set}
+  var interactor: LocalPresenterToInteractorProtocol? {get set}
+  var router: LocalPresenterToRouterProtocol? {get set}
   func startFetchingToDos(selectedList: Group)
   func deleteItemRequested(itemToDelete: Task)
   func toggleTaskIsCompleteRequest(taskToToggle: Task, isComplete: Bool)
   
 }
 
-protocol PresenterToViewProtocol: AnyObject{
+protocol LocalPresenterToViewProtocol: AnyObject{
   func showTasks(tasksArray:Array<Task>)
   func showError()
 }
 
-protocol PresenterToRouterProtocol: AnyObject {
+protocol LocalPresenterToRouterProtocol: AnyObject {
   static func createModule(selectedGroup: Group)-> TasksViewController
   static func createEntryModule(listToAddTaskTo: Group) -> EntryViewController
 }
 
-protocol PresenterToInteractorProtocol: AnyObject {
-  var presenter:InteractorToPresenterProtocol? {get set}
+protocol LocalPresenterToInteractorProtocol: AnyObject {
+  var presenter:LocalInteractorToPresenterProtocol? {get set}
   func fetchTasks(list: Group)
   func deleteTask(_ taskToDelete: Task)
   func toggleTaskIsComplete(_ taskToToggle: Task, _ isComplete: Bool)
 }
 
-protocol InteractorToPresenterProtocol: AnyObject {
+protocol LocalInteractorToPresenterProtocol: AnyObject {
   func tasksFetchedSuccess(tasksModelArray:Array<Task>)
   func tasksFetchFailed()
 }

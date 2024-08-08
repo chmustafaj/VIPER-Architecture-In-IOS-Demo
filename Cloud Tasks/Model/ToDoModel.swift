@@ -6,3 +6,8 @@
 //
 
 import Foundation
+
+struct ToDoModel {
+  var todo: String
+  var isComplete: Bool
+}

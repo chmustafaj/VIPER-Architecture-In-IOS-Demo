@@ -8,35 +8,44 @@
 import Foundation
 import UIKit
 
-class LocalRouter:PresenterToRouterProtocol{
+class LocalRouter:LocalPresenterToRouterProtocol{
+  
+  static func createEntryModule(listToAddTaskTo: Group) -> EntryViewController {
+    let entryVC = EntryViewController(list: listToAddTaskTo)
+    //    entryVC.update = {
+    //      self.getAllItems()
+    //      DispatchQueue.main.async {
+    //        self.tableView.reloadData()
+    //      }
+    //    }
+//    let navController = UINavigationController(rootViewController: entryVC)
+//    navController.modalPresentationStyle = .fullScreen
+//    present(navController, animated: true, completion: nil)
+    return entryVC
+  }
+  
+  
+  
+  static func createModule(selectedGroup: Group) -> TasksViewController {
+    let view = TasksViewController(list: selectedGroup)
     
-  static func createModule(selectedList: Group) -> TasksViewController {
-      let view = TasksViewController(list: selectedList)
-        
-        let presenter: ViewToPresenterProtocol & InteractorToPresenterProtocol = LocalPresenter()
-        let interactor: PresenterToInteractorProtocol = LocalInteractor()
-        let router:PresenterToRouterProtocol = LocalRouter()
-        
-        view.presentor = presenter
-        presenter.view = view
-        presenter.router = router
-        presenter.interactor = interactor
-        interactor.presenter = presenter
-        
-        return view
-        
-    }
+    let presenter: LocalViewToPresenterProtocol & LocalInteractorToPresenterProtocol = LocalPresenter()
+    let interactor: LocalPresenterToInteractorProtocol = LocalInteractor()
+    let router:LocalPresenterToRouterProtocol = LocalRouter()
     
-    static var mainstoryboard: UIStoryboard{
-        return UIStoryboard(name:"Main",bundle: Bundle.main)
-    }
+    view.presentor = presenter
+    presenter.view = view
+    presenter.router = router
+    presenter.interactor = interactor
+    interactor.presenter = presenter
     
-    func pushToMovieScreen(navigationConroller navigationController:UINavigationController) {
-        
-        let movieModue = MovieRouter.createMovieModule()
-        navigationController.pushViewController(movieModue,animated: true)
-        
-    }
+    return view
     
+  }
+  
+
+  
+  
+  
+  
 }
-view raw

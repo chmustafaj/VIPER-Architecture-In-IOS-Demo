@@ -96,7 +96,8 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
   
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     let selectedList = models[indexPath.row]
-    let tasksVC = TasksViewController(list: selectedList)
-    navigationController?.pushViewController(tasksVC, animated: true)
+    let tasksVC = LocalRouter.createModule(selectedGroup: selectedList)
+     navigationController?.pushViewController(tasksVC, animated: true)
+
   }
 }

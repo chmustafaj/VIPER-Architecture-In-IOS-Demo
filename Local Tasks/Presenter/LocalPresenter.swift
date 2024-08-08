@@ -8,33 +8,35 @@
 import Foundation
 import UIKit
 
-class LocalPresenter:ViewToPresenterProtocol {
-    
-    var view: PresenterToViewProtocol?
-    
-    var interactor: PresenterToInteractorProtocol?
-    
-    var router: PresenterToRouterProtocol?
-    
-    func startFetchingToDos() {
-        interactor?.fetchTasks()
-    }
-//    
-//    func showMovieController(navigationController: UINavigationController) {
-//        router?.pushToMovieScreen(navigationConroller:navigationController)
-//    }
+class LocalPresenter:LocalViewToPresenterProtocol {
 
+  
+  weak var view: LocalPresenterToViewProtocol?
+  
+  var interactor: LocalPresenterToInteractorProtocol?
+  
+  var router: LocalPresenterToRouterProtocol?
+  
+  func startFetchingToDos(selectedList: Group) {
+    interactor?.fetchTasks(list: selectedList)
+  }
+  func deleteItemRequested(itemToDelete: Task) {
+    interactor?.deleteTask(itemToDelete)
+  }
+  
+  func toggleTaskIsCompleteRequest(taskToToggle: Task, isComplete: Bool){
+    interactor?.toggleTaskIsComplete(taskToToggle, isComplete)
+  }
 }
 
-extension LocalPresenter: InteractorToPresenterProtocol{
+extension LocalPresenter: LocalInteractorToPresenterProtocol{
   
-    
-    func tasksFetchedSuccess(tasksModelArray: Array<Task>) {
-        view?.showTasks(tasksArray: tasksModelArray)
-    }
-    
-    func tasksFetchFailed() {
-        view?.showError()
-    }
-    
+  func tasksFetchedSuccess(tasksModelArray: Array<Task>) {
+    view?.showTasks(tasksArray: tasksModelArray)
+  }
+  
+  func tasksFetchFailed() {
+    view?.showError()
+  }
+  
 }
