@@ -7,25 +7,25 @@
 
 import UIKit
 
+
 class HomeViewController: UIViewController {
-  //MARK: - Variables
+  // MARK: - Variables
   let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-  private var models = [Task]()
+  private var models = [Group]()
+  
+  // Delegate
+  weak var delegate: ListViewDelegate?
   
   // MARK: - UI Elements
   private let tableView: UITableView = {
     let tb = UITableView()
     tb.backgroundColor = .systemBackground
     tb.allowsSelection = true
-    tb.register(TaskCell.self, forCellReuseIdentifier: TaskCell.identifier)
+    tb.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
     tb.translatesAutoresizingMaskIntoConstraints = false
     return tb
   }()
   
-  private lazy var btnAdd: UIBarButtonItem = {
-    let btn = UIBarButtonItem(title: "Add", style: .plain, target: self, action: #selector(presentEntryViewController))
-    return btn
-  }()
   // MARK: - Lifecycle
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -36,17 +36,14 @@ class HomeViewController: UIViewController {
   
   // MARK: - Methods
   private func setupUI() {
-    self.title = "Tasks"
-    self.view.backgroundColor = .systemBackground
+    self.title = "Lists"
     self.view.addSubview(tableView)
-    navigationItem.rightBarButtonItem = btnAdd
     
     NSLayoutConstraint.activate([
       tableView.topAnchor.constraint(equalTo: self.view.topAnchor),
       tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
       tableView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
       tableView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor)
-      
     ])
   }
   
@@ -54,59 +51,52 @@ class HomeViewController: UIViewController {
     self.tableView.delegate = self
     self.tableView.dataSource = self
   }
- 
-  @objc func presentEntryViewController() {
-    let entryVC = EntryViewController()
-    entryVC.update = {
-      self.getAllItems()
-      DispatchQueue.main.async {
-        self.tableView.reloadData()
-      }
-    }
-    let navController = UINavigationController(rootViewController: entryVC)
-    navController.modalPresentationStyle = .fullScreen
-    present(navController, animated: true, completion: nil)
-  }
   
   private func getAllItems() {
-    do{
-      print("getting data")
-      models = try context.fetch(Task.fetchRequest())
+    do {
+      print("Getting data")
+      models = try context.fetch(Group.fetchRequest())
       DispatchQueue.main.async {
         self.tableView.reloadData()
-        
       }
-    }
-    catch {
+    } catch {
       print("Cannot get data")
     }
   }
   
-  private func deleteItem(item: Task) {
+  private func deleteItem(item: Group) {
     context.delete(item)
-    do{
+    do {
       try context.save()
+    } catch {
+      print("Error saving")
     }
-    catch {
-      print("error saving")
+  }
+  
+  // ListViewDelegate method
+  func updateListView(items: [Group]) {
+    self.models = items
+    DispatchQueue.main.async {
+      self.tableView.reloadData()
     }
-    
   }
 }
 
-
 // MARK: - Delegate Methods
-
 extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     return self.models.count
   }
   
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    let cell = tableView.dequeueReusableCell(withIdentifier: TaskCell.identifier, for: indexPath) as? TaskCell
-    cell!.label.text = models[indexPath.row].name
-    return cell!
+    let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+    cell.textLabel?.text = models[indexPath.row].name
+    return cell
   }
   
-  
+  func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    let selectedList = models[indexPath.row]
+    let tasksVC = TasksViewController(list: selectedList)
+    navigationController?.pushViewController(tasksVC, animated: true)
+  }
 }

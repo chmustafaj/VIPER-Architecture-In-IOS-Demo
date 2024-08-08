@@ -8,8 +8,13 @@
 import Foundation
 import UIKit
 
+protocol TaskCellDelegate: AnyObject {
+  func taskCell(_ cell: TaskCell, didChangeCheckboxState: Bool)
+}
+
 class TaskCell: UITableViewCell {
   static let identifier = "TaskCell"
+  weak var delegate: TaskCellDelegate?
   
   let label: UILabel = {
     let l = UILabel()
@@ -17,7 +22,7 @@ class TaskCell: UITableViewCell {
     return l
   }()
   
-  private let checkBox: Checkbox = {
+  let checkBox: Checkbox = {
     let c = Checkbox()
     c.translatesAutoresizingMaskIntoConstraints = false
     return c
@@ -35,10 +40,11 @@ class TaskCell: UITableViewCell {
   private func setupUI() {
     self.contentView.addSubview(label)
     self.contentView.addSubview(checkBox)
+    checkBox.addTarget(self, action: #selector(didTapCheckbox), for: .touchUpInside)
+    
     
     NSLayoutConstraint.activate([
       label.topAnchor.constraint(equalTo: self.contentView.layoutMarginsGuide.topAnchor),
-      label.bottomAnchor.constraint(equalTo: self.contentView.layoutMarginsGuide.bottomAnchor),
       label.leadingAnchor.constraint(equalTo: self.contentView.layoutMarginsGuide.leadingAnchor),
       label.trailingAnchor.constraint(equalTo: checkBox.leadingAnchor, constant: -20),
       label.heightAnchor.constraint(equalToConstant: 20),
@@ -47,10 +53,12 @@ class TaskCell: UITableViewCell {
       checkBox.bottomAnchor.constraint(equalTo: self.contentView.layoutMarginsGuide.bottomAnchor),
       checkBox.widthAnchor.constraint(equalToConstant: 20),
       checkBox.trailingAnchor.constraint(equalTo: self.contentView.layoutMarginsGuide.trailingAnchor, constant: -20)
-
-
-
+      
+      
+      
     ])
   }
- 
+  @objc private func didTapCheckbox() {
+    delegate?.taskCell(self, didChangeCheckboxState: checkBox.isChecked)
+  }
 }
