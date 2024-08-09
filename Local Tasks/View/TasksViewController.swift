@@ -9,14 +9,13 @@ import UIKit
 
 class TasksViewController: UIViewController {
   
-  var presentor:LocalViewToPresenterProtocol?
   // MARK: - Variables
-  let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-  private var tasks = [Task]()
-  let list: Group?
+  var presentor:LocalViewToPresenterProtocol?
+  private var tasks = [TaskViewModel]()
+  private let listId: String?
   
   // MARK: - UI Elements
-  lazy var activityIndicator: UIActivityIndicatorView = {
+  private lazy var activityIndicator: UIActivityIndicatorView = {
     var i = UIActivityIndicatorView()
     i = UIActivityIndicatorView(style: .large)
     i.center = view.center
@@ -32,15 +31,16 @@ class TasksViewController: UIViewController {
     tb.translatesAutoresizingMaskIntoConstraints = false
     return tb
   }()
+  
   private lazy var btnAdd: UIBarButtonItem = {
     let btn = UIBarButtonItem(title: "Add", style: .plain, target: self, action: #selector(presentEntryViewController))
     return btn
   }()
-  var tasksArrayList:Array<Task> = Array()
   
-  init(models: [Group] = [Group](), list: Group?) {
-    // self.models = models
-    self.list = list
+  var tasksArrayList = [Task]()
+  
+  init(models: [Group] = [Group](), listId: String?) {
+    self.listId = listId
     super.init(nibName: nil, bundle: nil)
   }
   
@@ -53,7 +53,7 @@ class TasksViewController: UIViewController {
     setupUI()
     self.title = "Tasks"
     
-    presentor?.startFetchingToDos(selectedList: list!)
+    presentor?.startFetchingToDos(selectedListId: listId!)
     showProgressIndicator()
     
     
@@ -72,18 +72,18 @@ class TasksViewController: UIViewController {
     navigationItem.rightBarButtonItem = btnAdd
     
     NSLayoutConstraint.activate([
-      tableView.topAnchor.constraint(equalTo: self.view.topAnchor),
-      tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
-      tableView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
-      tableView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor)
+      tableView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
+      tableView.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor),
+      tableView.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor),
+      tableView.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor)
       
     ])
   }
   
   @objc func presentEntryViewController() {
-    let entryVC = LocalRouter.createEntryModule(listToAddTaskTo: list!)
+    let entryVC = LocalRouter.createEntryModule(listToAddTaskToId: listId!)
     entryVC.update = {
-      self.presentor?.startFetchingToDos(selectedList: self.list!)
+      self.presentor?.startFetchingToDos(selectedListId: self.listId!)
       DispatchQueue.main.async {
         self.tableView.reloadData()
       }
@@ -96,9 +96,10 @@ class TasksViewController: UIViewController {
   
 }
 
-extension TasksViewController:LocalPresenterToViewProtocol{
-  func showTasks(tasksArray: Array<Task>) {
-    print("List: \(String(describing: list))")
+extension TasksViewController: LocalPresenterToViewProtocol {
+  
+  func showTasks(tasksArray: [TaskViewModel]) {
+    print("List: \(String(describing: listId))")
     print("Tasks: \(String(describing: tasksArray))")
     tasks = tasksArray
     
@@ -106,8 +107,6 @@ extension TasksViewController:LocalPresenterToViewProtocol{
     DispatchQueue.main.async {
       self.tableView.reloadData()
       self.hideProgressIndicator()
-
-      
     }
   }
   
@@ -145,7 +144,7 @@ extension TasksViewController: UITableViewDelegate, UITableViewDataSource, TaskC
   func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
     if editingStyle == .delete {
       let taskToDelete = tasks[indexPath.row]
-      presentor?.deleteItemRequested(itemToDelete: taskToDelete)
+      presentor?.deleteItemRequested(taskToDeleteId: taskToDelete.name)
       tasks.remove(at: indexPath.row)
       tableView.deleteRows(at: [indexPath], with: .automatic)
     }
@@ -154,7 +153,7 @@ extension TasksViewController: UITableViewDelegate, UITableViewDataSource, TaskC
   func taskCell(_ cell: TaskCell, didChangeCheckboxState: Bool) {
     guard let indexPath = tableView.indexPath(for: cell) else { return }
     let task = tasks[indexPath.row]
-    presentor?.toggleTaskIsCompleteRequest(taskToToggle: task, isComplete: didChangeCheckboxState)
+    presentor?.toggleTaskIsCompleteRequest(taskToToggleId: task.name, isComplete: didChangeCheckboxState)
   }
   
 }

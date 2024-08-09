@@ -9,10 +9,12 @@ import UIKit
 
 class EntryViewController: UIViewController {
   // MARK: - Variables
+  
   var update: (() -> Void)?
-  let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-  var list: Group?
+  private var listId: String?
+  private var presenter: EnterTaskViewToPresenterProtocol?
   // MARK: - UI Elements
+  
   private let field: UITextField = {
     let f = UITextField()
     f.translatesAutoresizingMaskIntoConstraints = false
@@ -25,7 +27,7 @@ class EntryViewController: UIViewController {
     let btn = UIButton()
     btn.translatesAutoresizingMaskIntoConstraints = false
     btn.setImage(UIImage(systemName: "xmark"), for: .normal)
-    btn.addTarget(self, action: #selector(closeScreen), for: .touchUpInside)
+    btn.addTarget(EntryViewController.self, action: #selector(closeScreen), for: .touchUpInside)
     return btn
   }()
   
@@ -35,9 +37,9 @@ class EntryViewController: UIViewController {
   }()
   
   // MARK: - Lifecycle
-  init(update: (() -> Void)? = nil, list: Group) {
+  init(update: (() -> Void)? = nil, listToAddTaskToId: String) {
     self.update = update
-    self.list = list
+    self.listId = listToAddTaskToId
     super.init(nibName: nil, bundle: nil)
   }
   
@@ -81,37 +83,23 @@ class EntryViewController: UIViewController {
     guard let text = field.text, !text.isEmpty else {
       return
     }
-    let newItem = Task(context: context)
-    newItem.name = text
-    newItem.createdAt = Date()
-    newItem.group = list
-    do{
-      print("Saving task to list \(String(describing: list))")
-      
-      try context.save()
-    }
-    catch {
-      print("error saving")
-    }
-    update?()
-    dismiss(animated: true)
-    
-  }
-  
-  
-  private func updateItem(item: Task, newName: String) {
-    item.name = newName
-    item.createdAt = Date()
-    do{
-      try context.save()
-    }
-    catch {
-      print("error saving")
-    }
+    presenter?.startAddingTaskToList(listId: listId!, taskName: text)
   }
   
   @objc func closeScreen() {
     dismiss(animated: true)
-    
   }
+}
+
+extension EntryViewController: EnterTaskPresenterToViewProtocol {
+  func showTaskAdded() {
+    update?()
+    dismiss(animated: true)
+  }
+  
+  func showError() {
+    debugPrint("error adding")
+  }
+  
+  
 }

@@ -32,16 +32,12 @@ class BaseViewController: UIViewController, TabViewDelegate, ListViewDelegate {
   }()
   
   // MARK: - Variables
-  private var models = [Group]()
-  let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-  private let homeViewController = HomeViewController()
-  private let cloudViewController = CloudViewController()
-  
+  var presenter: BaseViewToPresenterProtocol?
+  private var models = [ListViewModel]()
+  private var homeViewController: HomeViewController?
   override func viewDidLoad() {
     super.viewDidLoad()
     setupViews()
-    homeViewController.delegate = self
-    setupCloudAndHomeViewController()
     
   }
   
@@ -50,6 +46,7 @@ class BaseViewController: UIViewController, TabViewDelegate, ListViewDelegate {
     navigationItem.rightBarButtonItem = btnAdd
     tabView.translatesAutoresizingMaskIntoConstraints = false
     tabView.delegate = self
+    
     
     view.addSubview(tabView)
     view.backgroundColor = .systemBackground
@@ -60,8 +57,9 @@ class BaseViewController: UIViewController, TabViewDelegate, ListViewDelegate {
       tabView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 30),
       tabView.heightAnchor.constraint(equalToConstant: 100),
     ])
-    
-    displayViewController(homeViewController)
+    homeViewController = BaseRouter().createHomeViewController()
+
+    displayViewController(homeViewController!)
   }
   
   private func displayViewController(_ viewController: UIViewController) {
@@ -82,24 +80,14 @@ class BaseViewController: UIViewController, TabViewDelegate, ListViewDelegate {
     viewController.didMove(toParent: self)
   }
   
-  // TODO: Add in router
-  func setupCloudAndHomeViewController() {
 
-    let presenter: CloudViewToPresenterProtocol & CloudInteractorToPresenterProtocol = CloudPresenter()
-    let interactor: CloudPresenterToInteractorProtocol = CloudInteractor()
-   // let router:CloudPresenterToRouterProtocol = CloudRouter()
-    
-    cloudViewController.presentor = presenter
-    presenter.view = cloudViewController
-    //presenter.router = router
-    presenter.interactor = interactor
-    interactor.presenter = presenter
-  }
   func tabView(_ tabView: TabView, didSelectItemAt index: Int) {
     switch index {
     case 0:
-      displayViewController(homeViewController)
+      homeViewController = BaseRouter().createHomeViewController()
+      displayViewController(homeViewController!)
     case 1:
+      let cloudViewController = BaseRouter().createCloudViewController()
       displayViewController(cloudViewController)
     default:
       break
@@ -113,35 +101,29 @@ class BaseViewController: UIViewController, TabViewDelegate, ListViewDelegate {
       guard let field = alert.textFields?.first, let text = field.text, !text.isEmpty else {
         return
       }
-      self.createList(name: text)
+      self.presenter?.startCreatingList(name: text)
     }))
     present(alert, animated: true)
   }
-  
-  private func createList(name: String) {
-    let newItem = Group(context: context)
-    newItem.name = name
-    do {
-      print("Saving")
-      try context.save()
-    } catch {
-      print("Error saving")
-    }
-    
-    do {
-      print("Getting data")
-      models = try context.fetch(Group.fetchRequest())
-      updateListView(items: models) 
-    } catch {
-      print("Cannot get data")
-    }
-  }
-  
-  func updateListView(items: [Group]) {
-    homeViewController.updateListView(items: items)
+  func updateListView(items: [ListViewModel]) {
+    homeViewController!.updateListView(items: items)
   }
 }
 
 protocol ListViewDelegate: AnyObject {
-  func updateListView(items: [Group])
+  func updateListView(items: [ListViewModel])
+}
+
+extension BaseViewController: BasePresenterToViewProtocol {
+  func showListAdded(listsArray: [ListViewModel]) {
+    updateListView(items: listsArray)
+    print("List added")
+
+  }
+  
+  func showError() {
+    debugPrint("error")
+  }
+  
+  
 }

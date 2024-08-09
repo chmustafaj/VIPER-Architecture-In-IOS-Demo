@@ -11,8 +11,8 @@ import UIKit
 class HomeViewController: UIViewController {
   // MARK: - Variables
   let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-  private var models = [Group]()
-  
+  private var models = [ListViewModel]()
+  var presenter: HomeViewToPresenterProtocol?
   // Delegate
   weak var delegate: ListViewDelegate?
   
@@ -31,7 +31,8 @@ class HomeViewController: UIViewController {
     super.viewDidLoad()
     setupUI()
     setupTableView()
-    getAllItems()
+    presenter?.startFetchingList()
+    
   }
   
   // MARK: - Methods
@@ -51,35 +52,29 @@ class HomeViewController: UIViewController {
     self.tableView.delegate = self
     self.tableView.dataSource = self
   }
-  
-  private func getAllItems() {
-    do {
-      print("Getting data")
-      models = try context.fetch(Group.fetchRequest())
-      DispatchQueue.main.async {
-        self.tableView.reloadData()
-      }
-    } catch {
-      print("Cannot get data")
-    }
-  }
-  
-  private func deleteItem(item: Group) {
-    context.delete(item)
-    do {
-      try context.save()
-    } catch {
-      print("Error saving")
-    }
-  }
-  
+
   // ListViewDelegate method
-  func updateListView(items: [Group]) {
+  func updateListView(items: [ListViewModel]) {
     self.models = items
     DispatchQueue.main.async {
       self.tableView.reloadData()
     }
   }
+}
+
+extension HomeViewController: HomePresenterToViewProtocol {
+  func showLists(listsArray: [ListViewModel]) {
+    models = listsArray
+    DispatchQueue.main.async {
+      self.tableView.reloadData()
+    }
+  }
+  
+  func showError() {
+    debugPrint("Error")
+  }
+  
+  
 }
 
 // MARK: - Delegate Methods
@@ -94,10 +89,18 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     return cell
   }
   
+  func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+    if editingStyle == .delete {
+      let listToDelete = models[indexPath.row]
+      models.remove(at: indexPath.row)
+      tableView.deleteRows(at: [indexPath], with: .automatic)
+    }
+  }
+  
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     let selectedList = models[indexPath.row]
-    let tasksVC = LocalRouter.createModule(selectedGroup: selectedList)
-     navigationController?.pushViewController(tasksVC, animated: true)
-
+    let tasksVC = LocalRouter.createModule(selectedGroupId: selectedList.name)
+    navigationController?.pushViewController(tasksVC, animated: true)
+    
   }
 }

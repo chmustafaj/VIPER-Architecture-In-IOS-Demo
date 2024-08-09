@@ -12,7 +12,7 @@ import Alamofire
 class CloudInteractor: CloudPresenterToInteractorProtocol{
   static let shared = CloudInteractor()
   private let baseUrl = "https://dummyjson.com/todos"
-  weak var presenter: CloudInteractorToPresenterProtocol?  // weak to prevent retain cycle 
+  weak var presenter: CloudInteractorToPresenterProtocol?  // weak to prevent retain cycle
   let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
   
   func fetchToDos() {
@@ -25,10 +25,6 @@ class CloudInteractor: CloudPresenterToInteractorProtocol{
         self.presenter?.tasksFetchFailed(error: error)
       }
     }
-  }
-  
-  func convertToModel() {
-    
   }
 }
 

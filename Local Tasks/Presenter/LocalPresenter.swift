@@ -9,7 +9,6 @@ import Foundation
 import UIKit
 
 class LocalPresenter:LocalViewToPresenterProtocol {
-
   
   weak var view: LocalPresenterToViewProtocol?
   
@@ -17,21 +16,21 @@ class LocalPresenter:LocalViewToPresenterProtocol {
   
   var router: LocalPresenterToRouterProtocol?
   
-  func startFetchingToDos(selectedList: Group) {
-    interactor?.fetchTasks(list: selectedList)
+  func startFetchingToDos(selectedListId: String) {
+    interactor?.fetchTasks(listId: selectedListId)
   }
-  func deleteItemRequested(itemToDelete: Task) {
-    interactor?.deleteTask(itemToDelete)
+  func deleteItemRequested(taskToDeleteId: String) {
+    interactor?.deleteTask(taskToDeleteId)
   }
   
-  func toggleTaskIsCompleteRequest(taskToToggle: Task, isComplete: Bool){
-    interactor?.toggleTaskIsComplete(taskToToggle, isComplete)
+  func toggleTaskIsCompleteRequest(taskToToggleId: String, isComplete: Bool){
+    interactor?.toggleTaskIsComplete(taskToToggleId, isComplete)
   }
 }
 
 extension LocalPresenter: LocalInteractorToPresenterProtocol{
   
-  func tasksFetchedSuccess(tasksModelArray: Array<Task>) {
+  func tasksFetchedSuccess(tasksModelArray: [TaskViewModel]) {
     view?.showTasks(tasksArray: tasksModelArray)
   }
   
