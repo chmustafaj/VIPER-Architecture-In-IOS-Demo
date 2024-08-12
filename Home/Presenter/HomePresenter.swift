@@ -8,6 +8,10 @@
 import Foundation
 
 class HomePresenter: HomeViewToPresenterProtocol {
+  func startLoadingTasksScreen(listId: String) {
+    router?.startLoadingTasksScreen(listId: listId)
+  }
+  
   weak var view: HomePresenterToViewProtocol?
   
   var interactor: HomePresenterToInteractorProtocol?
@@ -31,6 +35,4 @@ extension HomePresenter: HomeInteractorToPresenterProtocol {
   func listsFetchedFailed(error: String) {
     view?.showError()
   }
-  
-  
 }

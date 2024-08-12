@@ -8,12 +8,10 @@
 import Foundation
 import UIKit
 
-class LocalPresenter:LocalViewToPresenterProtocol {
-  
+class LocalPresenter: LocalViewToPresenterProtocol {
+
   weak var view: LocalPresenterToViewProtocol?
-  
   var interactor: LocalPresenterToInteractorProtocol?
-  
   var router: LocalPresenterToRouterProtocol?
   
   func startFetchingToDos(selectedListId: String) {
@@ -26,10 +24,14 @@ class LocalPresenter:LocalViewToPresenterProtocol {
   func toggleTaskIsCompleteRequest(taskToToggleId: String, isComplete: Bool){
     interactor?.toggleTaskIsComplete(taskToToggleId, isComplete)
   }
+  
+  func startLoadingEnterTaskScreen(listToAddTaskToId: String, update: @escaping (()->Void)) {
+    router?.createEntryModule(listToAddTaskToId: listToAddTaskToId, update: update)
+  }
+  
 }
 
 extension LocalPresenter: LocalInteractorToPresenterProtocol{
-  
   func tasksFetchedSuccess(tasksModelArray: [TaskViewModel]) {
     view?.showTasks(tasksArray: tasksModelArray)
   }
@@ -37,5 +39,6 @@ extension LocalPresenter: LocalInteractorToPresenterProtocol{
   func tasksFetchFailed() {
     view?.showError()
   }
-  
 }
+
+

@@ -20,8 +20,10 @@ class EnterTaskInteractor: EnterTaskPresenterToInteractorProtocol {
       try NetworkManager.networkManagerContext.save()
     }
     catch {
+      presenter?.taskAddedFailed()
       print("error saving")
     }
+    presenter?.taskAddedSuccess()
   }
 }
 

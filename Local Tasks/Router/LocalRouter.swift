@@ -8,39 +8,27 @@
 import Foundation
 import UIKit
 
-class LocalRouter:LocalPresenterToRouterProtocol{
+class LocalRouter:LocalPresenterToRouterProtocol {
+  weak var viewController: UIViewController?
   
-  static func createEntryModule(listToAddTaskToId: String) -> EntryViewController {
-    let entryVC = EntryViewController(listToAddTaskToId: listToAddTaskToId)
-//        entryVC.update = {
-//          self.getAllItems()
-//          DispatchQueue.main.async {
-//            self.tableView.reloadData()
-//          }
-//        }
-//    let navController = UINavigationController(rootViewController: entryVC)
-//    navController.modalPresentationStyle = .fullScreen
-//    present(navController, animated: true, completion: nil)
-    return entryVC
+  func createEntryModule(listToAddTaskToId: String, update: @escaping (()->Void)) {
+    let entryVC = EnterTaskRouter().createModule(listWeAreAddingToId: listToAddTaskToId)
+    entryVC.update = update
+    viewController?.navigationController?.pushViewController(entryVC, animated: true)
   }
   
-  
-  
-  static func createModule(selectedGroupId: String) -> TasksViewController {
-    
+  func createModule(selectedGroupId: String) -> TasksViewController {
     let view = TasksViewController(listId: selectedGroupId)
-    
     let presenter: LocalViewToPresenterProtocol & LocalInteractorToPresenterProtocol = LocalPresenter()
     let interactor: LocalPresenterToInteractorProtocol = LocalInteractor()
     let router:LocalPresenterToRouterProtocol = LocalRouter()
-    
     view.presentor = presenter
+    router.viewController = view
     presenter.view = view
     presenter.router = router
     presenter.interactor = interactor
     interactor.presenter = presenter
-    
     return view
-    
   }
+  
 }

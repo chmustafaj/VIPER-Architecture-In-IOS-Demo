@@ -42,7 +42,7 @@
 		4E46C1FE2C65040500A9CAF7 /* HomePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E46C1FD2C65040500A9CAF7 /* HomePresenter.swift */; };
 		4E46C2002C65041200A9CAF7 /* HomeInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E46C1FF2C65041200A9CAF7 /* HomeInteractor.swift */; };
 		4E46C2022C65042000A9CAF7 /* HomeRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E46C2012C65042000A9CAF7 /* HomeRouter.swift */; };
-		4E46C2042C65061800A9CAF7 /* List.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E46C2032C65061800A9CAF7 /* List.swift */; };
+		4E46C2042C65061800A9CAF7 /* ListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E46C2032C65061800A9CAF7 /* ListViewModel.swift */; };
 		4E46C2062C65F24100A9CAF7 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E46C2052C65F24100A9CAF7 /* NetworkManager.swift */; };
 		4E46C2082C65FA0100A9CAF7 /* TaskViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E46C2072C65FA0100A9CAF7 /* TaskViewModel.swift */; };
 		4E46C2112C660ECF00A9CAF7 /* EnterTaskProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E46C2102C660ECF00A9CAF7 /* EnterTaskProtocols.swift */; };
@@ -52,8 +52,9 @@
 		4E46C2202C661F2D00A9CAF7 /* BasePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E46C21F2C661F2D00A9CAF7 /* BasePresenter.swift */; };
 		4E46C2222C661F3600A9CAF7 /* BaseInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E46C2212C661F3600A9CAF7 /* BaseInteractor.swift */; };
 		4E46C2242C661F3C00A9CAF7 /* BaseRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E46C2232C661F3C00A9CAF7 /* BaseRouter.swift */; };
-		4E46C2262C661F4700A9CAF7 /* BaseEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E46C2252C661F4700A9CAF7 /* BaseEntity.swift */; };
 		4E46C2282C662F1E00A9CAF7 /* CloudRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E46C2272C662F1E00A9CAF7 /* CloudRouter.swift */; };
+		4E46C22A2C6638DD00A9CAF7 /* EnterTaskRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E46C2292C6638DD00A9CAF7 /* EnterTaskRouter.swift */; };
+		4E46C22C2C6A1EF300A9CAF7 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E46C22B2C6A1EF300A9CAF7 /* Result.swift */; };
 		7E96C06F2AC87F82DC2E47A0 /* Pods_TODO_ListTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31FE55EA591DF5D858826806 /* Pods_TODO_ListTests.framework */; };
 		E3B06189E5C2EA739D15B50F /* Pods_TODO_List.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68BCB982BC04FA25AE8A00C0 /* Pods_TODO_List.framework */; };
 /* End PBXBuildFile section */
@@ -117,7 +118,7 @@
 		4E46C1FD2C65040500A9CAF7 /* HomePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePresenter.swift; sourceTree = "<group>"; };
 		4E46C1FF2C65041200A9CAF7 /* HomeInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeInteractor.swift; sourceTree = "<group>"; };
 		4E46C2012C65042000A9CAF7 /* HomeRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeRouter.swift; sourceTree = "<group>"; };
-		4E46C2032C65061800A9CAF7 /* List.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = List.swift; sourceTree = "<group>"; };
+		4E46C2032C65061800A9CAF7 /* ListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListViewModel.swift; sourceTree = "<group>"; };
 		4E46C2052C65F24100A9CAF7 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		4E46C2072C65FA0100A9CAF7 /* TaskViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskViewModel.swift; sourceTree = "<group>"; };
 		4E46C2102C660ECF00A9CAF7 /* EnterTaskProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterTaskProtocols.swift; sourceTree = "<group>"; };
@@ -127,8 +128,9 @@
 		4E46C21F2C661F2D00A9CAF7 /* BasePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasePresenter.swift; sourceTree = "<group>"; };
 		4E46C2212C661F3600A9CAF7 /* BaseInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseInteractor.swift; sourceTree = "<group>"; };
 		4E46C2232C661F3C00A9CAF7 /* BaseRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseRouter.swift; sourceTree = "<group>"; };
-		4E46C2252C661F4700A9CAF7 /* BaseEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseEntity.swift; sourceTree = "<group>"; };
 		4E46C2272C662F1E00A9CAF7 /* CloudRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudRouter.swift; sourceTree = "<group>"; };
+		4E46C2292C6638DD00A9CAF7 /* EnterTaskRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterTaskRouter.swift; sourceTree = "<group>"; };
+		4E46C22B2C6A1EF300A9CAF7 /* Result.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
 		595E2AA9F81066A6D38A583B /* Pods-TODO List-TODO ListUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TODO List-TODO ListUITests.debug.xcconfig"; path = "Target Support Files/Pods-TODO List-TODO ListUITests/Pods-TODO List-TODO ListUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		634A34C850D2CD06A5360F48 /* Pods-TODO ListTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TODO ListTests.debug.xcconfig"; path = "Target Support Files/Pods-TODO ListTests/Pods-TODO ListTests.debug.xcconfig"; sourceTree = "<group>"; };
 		68BCB982BC04FA25AE8A00C0 /* Pods_TODO_List.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TODO_List.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -275,17 +277,17 @@
 				4E46C1E52C64B18400A9CAF7 /* Router */,
 				4E46C1E42C64B17600A9CAF7 /* Repository */,
 				4E3F71852C62455000DF844C /* View */,
-				4E3F71842C62454900DF844C /* Model */,
+				4E3F71842C62454900DF844C /* ViewModel */,
 			);
 			path = "Cloud Tasks";
 			sourceTree = "<group>";
 		};
-		4E3F71842C62454900DF844C /* Model */ = {
+		4E3F71842C62454900DF844C /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
 				4E46C1F02C64CB8200A9CAF7 /* ToDoModel.swift */,
 			);
-			path = Model;
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		4E3F71852C62455000DF844C /* View */ = {
@@ -307,9 +309,6 @@
 		4E3F71882C6245A000DF844C /* View */ = {
 			isa = PBXGroup;
 			children = (
-				4E3F71592C60D3CF00DF844C /* Checkbox.swift */,
-				4E3F71712C60FBE800DF844C /* TabView.swift */,
-				4E3F71722C60FBE900DF844C /* TabViewItem.swift */,
 				4E3F70E72C60A34A00DF844C /* LaunchScreen.storyboard */,
 				4E3F70E52C60A34A00DF844C /* Assets.xcassets */,
 			);
@@ -319,6 +318,7 @@
 		4E46C1C42C63AC7300A9CAF7 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				4E3F71592C60D3CF00DF844C /* Checkbox.swift */,
 				4E46C1C22C63AC7300A9CAF7 /* TaskCell.swift */,
 				4E46C1C32C63AC7300A9CAF7 /* TasksViewController.swift */,
 			);
@@ -404,6 +404,7 @@
 			isa = PBXGroup;
 			children = (
 				4E3F717B2C6220B700DF844C /* CloudEntity.swift */,
+				4E46C22B2C6A1EF300A9CAF7 /* Result.swift */,
 			);
 			path = Entity;
 			sourceTree = "<group>";
@@ -426,7 +427,7 @@
 			children = (
 				4E46C1C72C63AC7300A9CAF7 /* Group+CoreDataClass.swift */,
 				4E46C1C82C63AC7300A9CAF7 /* Group+CoreDataProperties.swift */,
-				4E46C2032C65061800A9CAF7 /* List.swift */,
+				4E46C2032C65061800A9CAF7 /* ListViewModel.swift */,
 			);
 			path = Entity;
 			sourceTree = "<group>";
@@ -486,6 +487,7 @@
 		4E46C20A2C660CDE00A9CAF7 /* Router */ = {
 			isa = PBXGroup;
 			children = (
+				4E46C2292C6638DD00A9CAF7 /* EnterTaskRouter.swift */,
 			);
 			path = Router;
 			sourceTree = "<group>";
@@ -529,7 +531,6 @@
 				4E46C21B2C661F0E00A9CAF7 /* Presenter */,
 				4E46C21A2C661F0200A9CAF7 /* Interactor */,
 				4E46C2192C661EFC00A9CAF7 /* Router */,
-				4E46C2182C661EF600A9CAF7 /* Entity */,
 				4E46C2172C661EEE00A9CAF7 /* View */,
 			);
 			path = Base;
@@ -538,17 +539,11 @@
 		4E46C2172C661EEE00A9CAF7 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				4E3F71712C60FBE800DF844C /* TabView.swift */,
+				4E3F71722C60FBE900DF844C /* TabViewItem.swift */,
 				4E3F71752C60FC3D00DF844C /* BaseViewController.swift */,
 			);
 			path = View;
-			sourceTree = "<group>";
-		};
-		4E46C2182C661EF600A9CAF7 /* Entity */ = {
-			isa = PBXGroup;
-			children = (
-				4E46C2252C661F4700A9CAF7 /* BaseEntity.swift */,
-			);
-			path = Entity;
 			sourceTree = "<group>";
 		};
 		4E46C2192C661EFC00A9CAF7 /* Router */ = {
@@ -844,6 +839,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4E46C22A2C6638DD00A9CAF7 /* EnterTaskRouter.swift in Sources */,
 				4E46C1E32C63AF5500A9CAF7 /* LocalRouter.swift in Sources */,
 				4E46C1DC2C63AC7300A9CAF7 /* TasksModel.xcdatamodeld in Sources */,
 				4E46C1DE2C63AC7300A9CAF7 /* HomeViewController.swift in Sources */,
@@ -855,13 +851,13 @@
 				4E3F717C2C6220B700DF844C /* CloudEntity.swift in Sources */,
 				4E46C1ED2C64B45300A9CAF7 /* CloudPresenter.swift in Sources */,
 				4E46C1D62C63AC7300A9CAF7 /* TasksViewController.swift in Sources */,
-				4E46C2262C661F4700A9CAF7 /* BaseEntity.swift in Sources */,
 				4E46C1F12C64CB8200A9CAF7 /* ToDoModel.swift in Sources */,
 				4E46C1DD2C63AC7300A9CAF7 /* EntryViewController.swift in Sources */,
 				4E46C1EF2C64BAB000A9CAF7 /* CloudInteractor.swift in Sources */,
 				4E3F715A2C60D3CF00DF844C /* Checkbox.swift in Sources */,
 				4E3F71732C60FBE900DF844C /* TabView.swift in Sources */,
 				4E46C2082C65FA0100A9CAF7 /* TaskViewModel.swift in Sources */,
+				4E46C22C2C6A1EF300A9CAF7 /* Result.swift in Sources */,
 				4E46C1E02C63AC7300A9CAF7 /* LocalTasksProtocols.swift in Sources */,
 				4E46C1DB2C63AC7300A9CAF7 /* Task+CoreDataProperties.swift in Sources */,
 				4E46C1EB2C64B26500A9CAF7 /* CloudProtocols.swift in Sources */,
@@ -873,7 +869,7 @@
 				4E46C2282C662F1E00A9CAF7 /* CloudRouter.swift in Sources */,
 				4E46C1D72C63AC7300A9CAF7 /* LocalInteractor.swift in Sources */,
 				4E3F71762C60FC3D00DF844C /* BaseViewController.swift in Sources */,
-				4E46C2042C65061800A9CAF7 /* List.swift in Sources */,
+				4E46C2042C65061800A9CAF7 /* ListViewModel.swift in Sources */,
 				4E46C21E2C661F2400A9CAF7 /* BaseProtocols.swift in Sources */,
 				4E3F70DF2C60A34600DF844C /* SceneDelegate.swift in Sources */,
 				4E46C2152C66108500A9CAF7 /* EnterTaskPresenter.swift in Sources */,

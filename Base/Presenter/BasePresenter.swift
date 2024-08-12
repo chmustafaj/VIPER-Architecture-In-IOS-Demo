@@ -8,7 +8,7 @@
 import Foundation
 
 class BasePresenter: BaseViewToPresenterProtocol {
-  var view: BasePresenterToViewProtocol?
+  weak var view: BasePresenterToViewProtocol?
   
   var interactor: BasePresenterToInteractorProtocol?
   
@@ -17,8 +17,6 @@ class BasePresenter: BaseViewToPresenterProtocol {
   func startCreatingList(name: String) {
     interactor?.addList(name: name)
   }
-  
-
 }
 
 extension BasePresenter: BaseInteractorToPresenterProtocol {
@@ -29,6 +27,4 @@ extension BasePresenter: BaseInteractorToPresenterProtocol {
   func listsAddedFailed() {
     view?.showError()
   }
-  
-  
 }

@@ -6,24 +6,26 @@
 //
 
 import Foundation
+import UIKit
 
 class HomeRouter: HomePresenterToRouterProtocol {
+  weak var viewController: UIViewController?
   
   func createModule() -> HomeViewController {
-    
     let view = HomeViewController()
-    
     let presenter: HomeViewToPresenterProtocol & HomeInteractorToPresenterProtocol = HomePresenter()
     let interactor: HomePresenterToInteractorProtocol = HomeInteractor()
-    let router:HomePresenterToRouterProtocol = HomeRouter()
-    
     view.presenter = presenter
     presenter.view = view
-    presenter.router = router
+    presenter.router = self
     presenter.interactor = interactor
     interactor.presenter = presenter
-    
+    self.viewController = view
     return view
-    
+  }
+  
+  func startLoadingTasksScreen(listId: String) {
+    let taskVC = LocalRouter().createModule(selectedGroupId: listId)
+    viewController?.navigationController?.pushViewController(taskVC, animated: true)
   }
 }

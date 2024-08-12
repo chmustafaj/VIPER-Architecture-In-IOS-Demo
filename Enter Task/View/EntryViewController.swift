@@ -12,23 +12,15 @@ class EntryViewController: UIViewController {
   
   var update: (() -> Void)?
   private var listId: String?
-  private var presenter: EnterTaskViewToPresenterProtocol?
+  var presenter: EnterTaskViewToPresenterProtocol?
   // MARK: - UI Elements
   
   private let field: UITextField = {
-    let f = UITextField()
-    f.translatesAutoresizingMaskIntoConstraints = false
-    f.layer.borderWidth = 1.0
-    f.layer.borderColor = UIColor(white: 0.5, alpha: 0.3).cgColor
-    return f
-  }()
-  
-  private let btnClose = {
-    let btn = UIButton()
-    btn.translatesAutoresizingMaskIntoConstraints = false
-    btn.setImage(UIImage(systemName: "xmark"), for: .normal)
-    btn.addTarget(EntryViewController.self, action: #selector(closeScreen), for: .touchUpInside)
-    return btn
+    let field = UITextField()
+    field.translatesAutoresizingMaskIntoConstraints = false
+    field.layer.borderWidth = 1.0
+    field.layer.borderColor = UIColor(white: 0.5, alpha: 0.3).cgColor
+    return field
   }()
   
   private lazy var btnSave: UIBarButtonItem = {
@@ -58,25 +50,14 @@ class EntryViewController: UIViewController {
     self.title = "Add Task to list"
     view.backgroundColor = .systemBackground
     self.view.addSubview(field)
-    self.view.addSubview(btnClose)
     navigationItem.rightBarButtonItem = btnSave
     
     NSLayoutConstraint.activate([
       field.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
       field.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
       field.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-      field.heightAnchor.constraint(equalToConstant: 52),
-      
-      btnClose.heightAnchor.constraint(equalToConstant: 20),
-      btnClose.widthAnchor.constraint(equalToConstant: 20),
-      btnClose.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-      btnClose.topAnchor.constraint(equalTo: view.topAnchor, constant: 90 )
-      
+      field.heightAnchor.constraint(equalToConstant: 52)
     ])
-  }
-  func textFieldShouldClear(_ textField: UITextField) -> Bool {
-    saveTask()
-    return true
   }
   
   @objc func saveTask() {
@@ -84,22 +65,16 @@ class EntryViewController: UIViewController {
       return
     }
     presenter?.startAddingTaskToList(listId: listId!, taskName: text)
-  }
-  
-  @objc func closeScreen() {
-    dismiss(animated: true)
+    self.navigationController?.popViewController(animated: true)
   }
 }
 
 extension EntryViewController: EnterTaskPresenterToViewProtocol {
   func showTaskAdded() {
     update?()
-    dismiss(animated: true)
   }
   
   func showError() {
     debugPrint("error adding")
   }
-  
-  
 }

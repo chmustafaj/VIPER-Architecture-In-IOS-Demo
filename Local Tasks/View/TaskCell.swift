@@ -61,4 +61,9 @@ class TaskCell: UITableViewCell {
   @objc private func didTapCheckbox() {
     delegate?.taskCell(self, didChangeCheckboxState: checkBox.isChecked)
   }
+  
+  func configure(taskName: String, isChecked: Bool) {
+    label.text = taskName
+    checkBox.isChecked = isChecked
+  }
 }

@@ -39,6 +39,7 @@ class TasksViewController: UIViewController {
   
   var tasksArrayList = [Task]()
   
+  // MARK: - Lifecycle Methods
   init(models: [Group] = [Group](), listId: String?) {
     self.listId = listId
     super.init(nibName: nil, bundle: nil)
@@ -52,12 +53,10 @@ class TasksViewController: UIViewController {
     setupTableView()
     setupUI()
     self.title = "Tasks"
-    
     presentor?.startFetchingToDos(selectedListId: listId!)
     showProgressIndicator()
-    
-    
   }
+  
   private func setupTableView() {
     self.tableView.delegate = self
     self.tableView.dataSource = self
@@ -68,42 +67,27 @@ class TasksViewController: UIViewController {
     self.view.backgroundColor = .systemBackground
     self.view.addSubview(tableView)
     view.addSubview(activityIndicator)
-    
     navigationItem.rightBarButtonItem = btnAdd
-    
     NSLayoutConstraint.activate([
       tableView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
       tableView.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor),
       tableView.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor),
       tableView.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor)
-      
     ])
   }
   
   @objc func presentEntryViewController() {
-    let entryVC = LocalRouter.createEntryModule(listToAddTaskToId: listId!)
-    entryVC.update = {
-      self.presentor?.startFetchingToDos(selectedListId: self.listId!)
-      DispatchQueue.main.async {
-        self.tableView.reloadData()
-      }
+    presentor?.startLoadingEnterTaskScreen(listToAddTaskToId: listId!) {
+      self.presentor?.startFetchingToDos(selectedListId: self.listId!)  // fetch the list again, and it will be updated
     }
-    let navController = UINavigationController(rootViewController: entryVC)
-    navController.modalPresentationStyle = .fullScreen
-    present(navController, animated: true, completion: nil)
   }
-  
-  
 }
 
 extension TasksViewController: LocalPresenterToViewProtocol {
-  
   func showTasks(tasksArray: [TaskViewModel]) {
     print("List: \(String(describing: listId))")
     print("Tasks: \(String(describing: tasksArray))")
     tasks = tasksArray
-    
-    
     DispatchQueue.main.async {
       self.tableView.reloadData()
       self.hideProgressIndicator()
@@ -113,7 +97,6 @@ extension TasksViewController: LocalPresenterToViewProtocol {
   func showError() {
     debugPrint("Error")
     hideProgressIndicator()
-    
   }
   
   private func showProgressIndicator() {
@@ -122,23 +105,18 @@ extension TasksViewController: LocalPresenterToViewProtocol {
   
   private func hideProgressIndicator() { 
     activityIndicator.stopAnimating()
-    
   }
-  
-  
-  
 }
 
-extension TasksViewController: UITableViewDelegate, UITableViewDataSource, TaskCellDelegate {
+extension TasksViewController: UITableViewDelegate, UITableViewDataSource {
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     return self.tasks.count
   }
   
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     let cell = tableView.dequeueReusableCell(withIdentifier: TaskCell.identifier, for: indexPath) as? TaskCell
-    cell!.label.text = tasks[indexPath.row].name
-    cell!.checkBox.isChecked = tasks[indexPath.row].isComplete
-    cell!.delegate = self
+    cell?.configure(taskName: tasks[indexPath.row].name, isChecked: tasks[indexPath.row].isComplete)
+    cell?.delegate = self
     return cell!
   }
   func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
@@ -149,11 +127,12 @@ extension TasksViewController: UITableViewDelegate, UITableViewDataSource, TaskC
       tableView.deleteRows(at: [indexPath], with: .automatic)
     }
   }
-  
+}
+
+extension TasksViewController: TaskCellDelegate {
   func taskCell(_ cell: TaskCell, didChangeCheckboxState: Bool) {
     guard let indexPath = tableView.indexPath(for: cell) else { return }
     let task = tasks[indexPath.row]
     presentor?.toggleTaskIsCompleteRequest(taskToToggleId: task.name, isComplete: didChangeCheckboxState)
   }
-  
 }

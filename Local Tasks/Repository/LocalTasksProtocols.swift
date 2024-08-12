@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import UIKit
+
 protocol LocalViewToPresenterProtocol: AnyObject{
   
   var view: LocalPresenterToViewProtocol? {get set}
@@ -14,7 +16,7 @@ protocol LocalViewToPresenterProtocol: AnyObject{
   func startFetchingToDos(selectedListId: String)
   func deleteItemRequested(taskToDeleteId: String)
   func toggleTaskIsCompleteRequest(taskToToggleId: String, isComplete: Bool)
-  
+  func startLoadingEnterTaskScreen(listToAddTaskToId: String, update: @escaping (()->Void))
 }
 
 
@@ -24,8 +26,9 @@ protocol LocalPresenterToViewProtocol: AnyObject {
 }
 
 protocol LocalPresenterToRouterProtocol: AnyObject {
-  static func createModule(selectedGroupId: String) -> TasksViewController
-  static func createEntryModule(listToAddTaskToId: String) -> EntryViewController
+  func createModule(selectedGroupId: String) -> TasksViewController
+  func createEntryModule(listToAddTaskToId: String, update: @escaping (()->Void))
+  var viewController: UIViewController? {get set}
 }
 
 protocol LocalPresenterToInteractorProtocol: AnyObject {
@@ -39,3 +42,4 @@ protocol LocalInteractorToPresenterProtocol: AnyObject {
   func tasksFetchedSuccess(tasksModelArray: [TaskViewModel])
   func tasksFetchFailed()
 }
+

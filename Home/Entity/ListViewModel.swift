@@ -10,7 +10,6 @@ import Foundation
 struct ListViewModel {
   var name: String = "name"
   var tasks: Set<Task> = Set<Task>()
-  
 }
 
 

@@ -10,11 +10,8 @@ import UIKit
 
 class HomeViewController: UIViewController {
   // MARK: - Variables
-  let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
   private var models = [ListViewModel]()
   var presenter: HomeViewToPresenterProtocol?
-  // Delegate
-  weak var delegate: ListViewDelegate?
   
   // MARK: - UI Elements
   private let tableView: UITableView = {
@@ -32,14 +29,12 @@ class HomeViewController: UIViewController {
     setupUI()
     setupTableView()
     presenter?.startFetchingList()
-    
   }
   
   // MARK: - Methods
   private func setupUI() {
     self.title = "Lists"
     self.view.addSubview(tableView)
-    
     NSLayoutConstraint.activate([
       tableView.topAnchor.constraint(equalTo: self.view.topAnchor),
       tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
@@ -53,7 +48,6 @@ class HomeViewController: UIViewController {
     self.tableView.dataSource = self
   }
 
-  // ListViewDelegate method
   func updateListView(items: [ListViewModel]) {
     self.models = items
     DispatchQueue.main.async {
@@ -73,8 +67,6 @@ extension HomeViewController: HomePresenterToViewProtocol {
   func showError() {
     debugPrint("Error")
   }
-  
-  
 }
 
 // MARK: - Delegate Methods
@@ -92,6 +84,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
   func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
     if editingStyle == .delete {
       let listToDelete = models[indexPath.row]
+      presenter?.startDeletingListItem(id: listToDelete.name)
       models.remove(at: indexPath.row)
       tableView.deleteRows(at: [indexPath], with: .automatic)
     }
@@ -99,8 +92,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
   
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     let selectedList = models[indexPath.row]
-    let tasksVC = LocalRouter.createModule(selectedGroupId: selectedList.name)
-    navigationController?.pushViewController(tasksVC, animated: true)
-    
+    presenter?.startLoadingTasksScreen(listId: selectedList.name)
+
   }
 }

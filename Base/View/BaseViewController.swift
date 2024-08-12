@@ -35,10 +35,11 @@ class BaseViewController: UIViewController, TabViewDelegate, ListViewDelegate {
   var presenter: BaseViewToPresenterProtocol?
   private var models = [ListViewModel]()
   private var homeViewController: HomeViewController?
+  private var cloudViewController: CloudViewController?
+  var router: BasePresenterToRouterProtocol?
   override func viewDidLoad() {
     super.viewDidLoad()
     setupViews()
-    
   }
   
   // MARK: - Methods
@@ -46,37 +47,31 @@ class BaseViewController: UIViewController, TabViewDelegate, ListViewDelegate {
     navigationItem.rightBarButtonItem = btnAdd
     tabView.translatesAutoresizingMaskIntoConstraints = false
     tabView.delegate = self
-    
-    
     view.addSubview(tabView)
     view.backgroundColor = .systemBackground
-    
     NSLayoutConstraint.activate([
       tabView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
       tabView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
       tabView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 30),
       tabView.heightAnchor.constraint(equalToConstant: 100),
     ])
-    homeViewController = BaseRouter().createHomeViewController()
-
+    homeViewController = router?.createHomeViewController()
+    cloudViewController = router?.createCloudViewController()
     displayViewController(homeViewController!)
   }
   
   private func displayViewController(_ viewController: UIViewController) {
     children.forEach { $0.view.removeFromSuperview() }
     children.forEach { $0.removeFromParent() }
-    
     addChild(viewController)
     viewController.view.translatesAutoresizingMaskIntoConstraints = false
     view.addSubview(viewController.view)
-    
     NSLayoutConstraint.activate([
       viewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
       viewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
       viewController.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
       viewController.view.bottomAnchor.constraint(equalTo: tabView.topAnchor)
     ])
-    
     viewController.didMove(toParent: self)
   }
   
@@ -84,11 +79,9 @@ class BaseViewController: UIViewController, TabViewDelegate, ListViewDelegate {
   func tabView(_ tabView: TabView, didSelectItemAt index: Int) {
     switch index {
     case 0:
-      homeViewController = BaseRouter().createHomeViewController()
       displayViewController(homeViewController!)
     case 1:
-      let cloudViewController = BaseRouter().createCloudViewController()
-      displayViewController(cloudViewController)
+      displayViewController(cloudViewController!)
     default:
       break
     }
@@ -118,12 +111,8 @@ extension BaseViewController: BasePresenterToViewProtocol {
   func showListAdded(listsArray: [ListViewModel]) {
     updateListView(items: listsArray)
     print("List added")
-
   }
-  
   func showError() {
     debugPrint("error")
   }
-  
-  
 }

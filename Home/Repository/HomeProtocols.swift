@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 protocol HomeViewToPresenterProtocol: AnyObject {
   var view: HomePresenterToViewProtocol? {get set}
@@ -13,6 +14,7 @@ protocol HomeViewToPresenterProtocol: AnyObject {
   var router: HomePresenterToRouterProtocol? {get set}
   func startFetchingList()
   func startDeletingListItem(id: String)
+  func startLoadingTasksScreen(listId: String)
 }
 
 protocol HomePresenterToViewProtocol: AnyObject {
@@ -27,10 +29,14 @@ protocol HomePresenterToInteractorProtocol: AnyObject {
 }
 
 protocol HomePresenterToRouterProtocol: AnyObject {
-    func createModule() -> HomeViewController
+  func createModule() -> HomeViewController
+  func startLoadingTasksScreen(listId: String)
+  var viewController: UIViewController? {get set}
 }
 
 protocol HomeInteractorToPresenterProtocol: AnyObject {
   func listsFetchedSuccess(listsModelArray: [ListViewModel])
   func listsFetchedFailed(error: String)
 }
+
+

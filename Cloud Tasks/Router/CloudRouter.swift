@@ -6,22 +6,20 @@
 //
 
 import Foundation
+import UIKit
 
 class CloudRouter: CloudPresenterToRouterProtocol {
+  weak var viewController: UIViewController?
   
-  static func createModule(selectedGroup: Group) -> CloudViewController {
+   func createModule() -> CloudViewController {
     let view = CloudViewController()
-    
-    let presenter: CloudViewToPresenterProtocol & CloudInteractorToPresenterProtocol = CloudPresenter()
+    let presenter: CloudViewToPresenterProtocol = CloudPresenter()
     let interactor: CloudPresenterToInteractorProtocol = CloudInteractor()
-    let router:CloudPresenterToRouterProtocol = CloudRouter()
-    
     view.presentor = presenter
     presenter.view = view
-    presenter.router = router
+    presenter.router = self
     presenter.interactor = interactor
-    interactor.presenter = presenter
-    
+    self.viewController = view
     return view
   }
 }

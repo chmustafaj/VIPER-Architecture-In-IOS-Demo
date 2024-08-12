@@ -25,7 +25,7 @@ protocol EnterTaskPresenterToInteractorProtocol: AnyObject {
 }
 
 protocol EnterTaskPresenterToRouterProtocol: AnyObject {
-  
+  func createModule(listWeAreAddingToId: String) -> EntryViewController
 }
 
 protocol EnterTaskInteractorToPresenterProtocol: AnyObject {

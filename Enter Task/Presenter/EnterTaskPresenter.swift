@@ -9,9 +9,7 @@ import Foundation
 
 class EnterTaskPresenter: EnterTaskViewToPresenterProtocol {
   weak var view: EnterTaskPresenterToViewProtocol?
-  
   var interactor: EnterTaskPresenterToInteractorProtocol?
-  
   var router: EnterTaskPresenterToRouterProtocol?
   
   func startAddingTaskToList(listId: String, taskName: String) {
@@ -27,6 +25,4 @@ extension EnterTaskPresenter: EnterTaskInteractorToPresenterProtocol {
   func taskAddedFailed() {
     view?.showError()
   }
-  
-  
 }

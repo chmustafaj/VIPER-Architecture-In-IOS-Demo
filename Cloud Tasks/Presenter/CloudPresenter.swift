@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Alamofire
 
 class CloudPresenter: CloudViewToPresenterProtocol {
 
@@ -15,16 +14,13 @@ class CloudPresenter: CloudViewToPresenterProtocol {
   var router: CloudPresenterToRouterProtocol?
   
   func startFetchingToDos() {
-    interactor?.fetchToDos()
-  }
-  
-}
-extension CloudPresenter: CloudInteractorToPresenterProtocol {
-  func todosFetchedSuccess(tasksModelArray: Array<ToDoModel>) {
-    view?.showToDos(tasksArray: tasksModelArray)
-  }
-  
-  func tasksFetchFailed(error: Alamofire.AFError) {
-    view?.showError(error: error)
+    interactor?.fetchToDos() { result in
+      switch(result) {
+      case .success(let models):
+        self.view?.showToDos(tasksArray: models)
+      case .failure(let error):
+        self.view?.showError(error: error)
+      }
+    }
   }
 }

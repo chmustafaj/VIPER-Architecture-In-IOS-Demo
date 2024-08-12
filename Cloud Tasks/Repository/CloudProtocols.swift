@@ -23,15 +23,9 @@ protocol CloudPresenterToViewProtocol: AnyObject{
 }
 
 protocol CloudPresenterToRouterProtocol: AnyObject {
-  static func createModule(selectedGroup: Group)-> CloudViewController
+  func createModule()-> CloudViewController
 }
 
 protocol CloudPresenterToInteractorProtocol: AnyObject {
-  var presenter:CloudInteractorToPresenterProtocol? {get set}
-  func fetchToDos()
-}
-
-protocol CloudInteractorToPresenterProtocol: AnyObject {
-  func todosFetchedSuccess(tasksModelArray: [ToDoModel])
-  func tasksFetchFailed(error: AFError)
+  func fetchToDos(success: @escaping (Result)->Void)
 }

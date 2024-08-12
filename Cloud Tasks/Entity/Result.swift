@@ -5,4 +5,9 @@
 //  Created by Mustafa Jawad on 12/8/2024.
 //
 
-import Foundation
+import Alamofire
+
+enum Result {
+    case success([ToDoModel])
+    case failure(AFError)
+}

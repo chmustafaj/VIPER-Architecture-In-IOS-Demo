@@ -16,11 +16,11 @@ class CloudViewController: UIViewController {
   // MARK: - UI Elements
   
   lazy var activityIndicator: UIActivityIndicatorView = {
-    var i = UIActivityIndicatorView()
-    i = UIActivityIndicatorView(style: .large)
-    i.center = view.center
-    i.hidesWhenStopped = true
-    return i
+    var indicator = UIActivityIndicatorView()
+    indicator = UIActivityIndicatorView(style: .large)
+    indicator.center = view.center
+    indicator.hidesWhenStopped = true
+    return indicator
   }()
   
   private let tableView: UITableView = {
@@ -51,9 +51,7 @@ class CloudViewController: UIViewController {
       tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
       tableView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
       tableView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor)
-      
     ])
-    
   }
   
   private func setupTableView() {
@@ -68,7 +66,6 @@ class CloudViewController: UIViewController {
   private func hideProgressIndicator() {
     activityIndicator.stopAnimating()
   }
-  
 }
 
 extension CloudViewController: CloudPresenterToViewProtocol {
@@ -85,8 +82,6 @@ extension CloudViewController: CloudPresenterToViewProtocol {
     print("Failed to fetch todos:", error)
     hideProgressIndicator()
   }
-  
-  
 }
 extension CloudViewController: UITableViewDelegate, UITableViewDataSource, TaskCellDelegate {
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -95,13 +90,10 @@ extension CloudViewController: UITableViewDelegate, UITableViewDataSource, TaskC
   
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     let cell = tableView.dequeueReusableCell(withIdentifier: TaskCell.identifier, for: indexPath) as? TaskCell
-    cell!.label.text = todos[indexPath.row].todo
-    cell!.checkBox.isChecked = todos[indexPath.row].isComplete
-    cell!.delegate = self
+    cell?.configure(taskName: todos[indexPath.row].todo, isChecked: todos[indexPath.row].isComplete)
+    cell?.delegate = self
     return cell!
   }
-  
-
   
   func taskCell(_ cell: TaskCell, didChangeCheckboxState: Bool) {
     guard let indexPath = tableView.indexPath(for: cell) else { return }

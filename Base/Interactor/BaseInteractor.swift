@@ -8,7 +8,7 @@
 import Foundation
 
 class BaseInteractor: BasePresenterToInteractorProtocol {
-  var presenter: (any BaseInteractorToPresenterProtocol)?
+  weak var presenter: (any BaseInteractorToPresenterProtocol)?
   
   func addList(name: String) {
     let newItem = Group(context: NetworkManager.networkManagerContext)
