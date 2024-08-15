@@ -10,53 +10,44 @@ import UIKit
 
 class LocalInteractor: LocalPresenterToInteractorProtocol{
   
-  weak var presenter: LocalInteractorToPresenterProtocol?
+  private let dataManager: DataManagerProtocol
   private var tasks = [Task]()
+  // Dependency injection: We are expecting a Protocol, but we are passing an implementation from the initialiser
+  init(dataManager: DataManagerProtocol) {
+    self.dataManager = dataManager
+  }
   
-  func fetchTasks(listId: String) {
-    let list = getListFromId(id: listId)
-    do{
-      print("getting data")
-      let allTasks = try NetworkManager.networkManagerContext.fetch(Task.fetchRequest())
-      print(allTasks)
-      
-      tasks = allTasks.filter({ $0.group == list})
-      let tasksModels = convertTasksEntitiesToViewModels(tasksEntities: tasks)
-      self.presenter?.tasksFetchedSuccess(tasksModelArray: tasksModels)
-    }
-    catch {
-      print("Cannot get data")
-      self.presenter?.tasksFetchFailed()
+  func fetchTasks(listId: String, handleResult: @escaping ([Task])->Void) {
+    if let list = getListFromId(id: listId) {
+      if let allTasks = dataManager.fetchAllTasks(){
+        print(allTasks)
+        tasks = allTasks.filter({ $0.group == list})
+        handleResult(tasks)
+      }else {
+        handleResult([Task]())
+      }
     }
   }
   
   func deleteTask(_ taskToDeleteId: String) {
-    let taskToDelete = getTaskFromId(id: taskToDeleteId)
-    NetworkManager.networkManagerContext.delete(taskToDelete)
-    do{
-      try NetworkManager.networkManagerContext.save()
-    }
-    catch {
-      print("error deleting")
+    if let taskToDelete = getTaskFromId(id: taskToDeleteId) {
+      dataManager.deleteTask(taskToDelete: taskToDelete)
+    } else{
+      debugPrint("Error")
     }
   }
   
   func toggleTaskIsComplete(_ taskToToggleId: String, _ isComplete: Bool) {
-    let taskToToggle = getTaskFromId(id: taskToToggleId)
-    taskToToggle.isComplete = isComplete
-    do {
-      try NetworkManager.networkManagerContext.save()
-    } catch {
-      print("Failed to save task")
+    if let taskToToggle = getTaskFromId(id: taskToToggleId) {
+      dataManager.toggleTaskIsComplete(task: taskToToggle, isComplete: isComplete)
     }
   }
 }
 
+// MARK: - Helper functions
 extension LocalInteractor {
-  func getListFromId(id: String) -> Group{
-    do{
-      print("getting data")
-      let allLists = try NetworkManager.networkManagerContext.fetch(Group.fetchRequest())
+  func getListFromId(id: String) -> Group? {
+    if let allLists = dataManager.fetchLists() {
       print(allLists)
       for list in allLists {
         if(list.name == id){
@@ -64,39 +55,23 @@ extension LocalInteractor {
         }
       }
     }
-    catch {
-      print("Cannot get data")
-      self.presenter?.tasksFetchFailed()
-    }
-    return Group()
+    return nil
   }
-  
-  
-  func getTaskFromId(id: String) ->Task {
+  func getTaskFromId(id: String) ->Task? {
     do{
       print("getting data")
-      let allTasks = try NetworkManager.networkManagerContext.fetch(Task.fetchRequest())
-      print(allTasks)
-      for task in allTasks {
-        if(task.name == id){
-          return task
+      if let allTasks = dataManager.fetchAllTasks() {
+        print(allTasks)
+        for task in allTasks {
+          if(task.name == id){
+            return task
+          }
         }
+      }else{
+        print("Cannot get data")
+        return nil
       }
     }
-    catch {
-      print("Cannot get data")
-      self.presenter?.tasksFetchFailed()
-    }
-    return Task()
-  }
-  
-  func convertTasksEntitiesToViewModels(tasksEntities: [Task]) -> [TaskViewModel] {
-    var taskViewModels = [TaskViewModel]()
-    for task in tasksEntities {
-      let taskVM = TaskViewModel(name: task.name!, isComplete: task.isComplete)
-      taskViewModels.append(taskVM)
-    }
-    return taskViewModels
-    
+    return nil
   }
 }

@@ -6,16 +6,21 @@
 //
 
 import Foundation
-
+import UIKit
 class BaseInteractor: BasePresenterToInteractorProtocol {
   weak var presenter: (any BaseInteractorToPresenterProtocol)?
+  let dataManager: DataManagerProtocol
+  
+  init(dataManager: DataManagerProtocol) {
+    self.dataManager = dataManager
+  }
   
   func addList(name: String) {
-    let newItem = Group(context: NetworkManager.networkManagerContext)
+    let newItem = Group(context: dataManager.dataManagerContext!)
     newItem.name = name
     do {
       print("Saving")
-      try NetworkManager.networkManagerContext.save()
+      try dataManager.dataManagerContext!.save()
     } catch {
       print("Error saving")
       presenter?.listsAddedFailed()
@@ -23,9 +28,8 @@ class BaseInteractor: BasePresenterToInteractorProtocol {
     
     do {
       print("Getting data")
-      let entities = try NetworkManager.networkManagerContext.fetch(Group.fetchRequest())
-      let models = toListViewModels(groups: entities)
-      presenter?.listsAddedSuccess(listsModelArray: models)
+      let entities = try dataManager.dataManagerContext!.fetch(Group.fetchRequest())
+      presenter?.listsAddedSuccess(listEntities: entities)
     } catch {
       print("Cannot get data")
       presenter?.listsAddedFailed()
@@ -33,23 +37,3 @@ class BaseInteractor: BasePresenterToInteractorProtocol {
   }
 }
 
-extension BaseInteractor {
-  func toListViewModels( groups: [Group] ) -> [ListViewModel] {
-    var listViewModels = [ListViewModel]()
-    for group in groups {
-      var listVM = ListViewModel()
-      if let groupName = group.name {
-        listVM.name = groupName
-        if let groupTasks = group.tasks as? Set<Task> {
-          listVM.tasks = groupTasks
-        }else{
-          debugPrint("Group tasks are nil!")
-        }
-      }else{
-        debugPrint("Group name is nil!")
-      }
-      listViewModels.append(listVM)
-    }
-    return listViewModels
-  }
-}

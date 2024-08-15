@@ -13,13 +13,12 @@ class HomeRouter: HomePresenterToRouterProtocol {
   
   func createModule() -> HomeViewController {
     let view = HomeViewController()
-    let presenter: HomeViewToPresenterProtocol & HomeInteractorToPresenterProtocol = HomePresenter()
-    let interactor: HomePresenterToInteractorProtocol = HomeInteractor()
+    let presenter: HomeViewToPresenterProtocol = HomePresenter()
+    let interactor: HomePresenterToInteractorProtocol = HomeInteractor(dataManager: DataManager()) //DI
     view.presenter = presenter
     presenter.view = view
     presenter.router = self
     presenter.interactor = interactor
-    interactor.presenter = presenter
     self.viewController = view
     return view
   }

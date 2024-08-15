@@ -23,8 +23,7 @@ protocol HomePresenterToViewProtocol: AnyObject {
   
 }
 protocol HomePresenterToInteractorProtocol: AnyObject {
-  var presenter: HomeInteractorToPresenterProtocol? {get set}
-  func fetchList()
+  func fetchList(handleResult: @escaping ([Group])->Void)
   func deleteListItem(listItemId: String)
 }
 
@@ -32,11 +31,6 @@ protocol HomePresenterToRouterProtocol: AnyObject {
   func createModule() -> HomeViewController
   func startLoadingTasksScreen(listId: String)
   var viewController: UIViewController? {get set}
-}
-
-protocol HomeInteractorToPresenterProtocol: AnyObject {
-  func listsFetchedSuccess(listsModelArray: [ListViewModel])
-  func listsFetchedFailed(error: String)
 }
 
 

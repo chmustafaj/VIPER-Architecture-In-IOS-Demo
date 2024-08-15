@@ -19,7 +19,14 @@ class HomePresenter: HomeViewToPresenterProtocol {
   var router: HomePresenterToRouterProtocol?
   
   func startFetchingList() {
-    interactor?.fetchList()
+    interactor?.fetchList() { listsEntities in
+      if listsEntities.isEmpty == false {
+        let listViewModels = self.convertEntityToViewModel(groupEntites: listsEntities)
+        self.view?.showLists(listsArray: listViewModels)
+      }else{
+        self.view?.showError()
+      }
+    }
   }
   
   func startDeletingListItem(id: String) {
@@ -27,12 +34,24 @@ class HomePresenter: HomeViewToPresenterProtocol {
   }
 }
 
-extension HomePresenter: HomeInteractorToPresenterProtocol {
-  func listsFetchedSuccess(listsModelArray: [ListViewModel]) {
-    view?.showLists(listsArray: listsModelArray)
-  }
-  
-  func listsFetchedFailed(error: String) {
-    view?.showError()
+// MARK: - Helper functions
+extension HomePresenter {
+  func convertEntityToViewModel(groupEntites: [Group]) -> [ListViewModel] {
+    var listViewModels = [ListViewModel]()
+    for group in groupEntites {
+      var listVM = ListViewModel()
+      if let groupName = group.name {
+        listVM.name = groupName
+        if let groupTasks = group.tasks as? Set<Task> {
+          listVM.tasks = groupTasks
+        }else{
+          debugPrint("Group tasks are nil!")
+        }
+      }else{
+        debugPrint("Group name is nil!")
+      }
+      listViewModels.append(listVM)
+    }
+    return listViewModels
   }
 }

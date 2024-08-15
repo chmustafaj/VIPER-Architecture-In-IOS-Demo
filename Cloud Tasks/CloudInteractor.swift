@@ -6,22 +6,24 @@
 //
 
 import Foundation
-import UIKit
 import Alamofire
 
 class CloudInteractor: CloudPresenterToInteractorProtocol {
-
-  static let shared = CloudInteractor()
+  private let networkManager: NetworkManagerProtocol
   private let baseUrl = "https://dummyjson.com/todos"
   
-  func fetchToDos(success: @escaping (Result) -> Void) {
-    AF.request(baseUrl, method: .get).responseDecodable(of: TodosResponse.self) { response in
-      switch response.result {
-      case .success(let todoResponse):
-        let models = todoResponse.toToDoModels()
-        success(Result.success(models))
+  init(networkManager: NetworkManagerProtocol) {
+    self.networkManager = networkManager
+  }
+  
+  func fetchToDos(handleResult: @escaping (MyResult) -> Void) {
+    networkManager.fetchData(from: baseUrl) { result in  // this result is coming from the fetch data function
+      switch result {
+      case .success(let entities):
+        let responseEntities = entities
+        handleResult(MyResult.success(responseEntities.todos))
       case .failure(let error):
-        success(Result.failure(error))
+        handleResult(MyResult.failure(error))
       }
     }
   }

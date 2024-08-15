@@ -17,8 +17,7 @@ protocol BaseViewToPresenterProtocol: AnyObject {
 
 protocol BasePresenterToViewProtocol: AnyObject {
   func showListAdded(listsArray: [ListViewModel])
-  func showError()
-  
+  func showError()  
 }
 protocol BasePresenterToInteractorProtocol: AnyObject {
   var presenter: BaseInteractorToPresenterProtocol? {get set}
@@ -32,6 +31,6 @@ protocol BasePresenterToRouterProtocol: AnyObject {
 }
 
 protocol BaseInteractorToPresenterProtocol: AnyObject {
-  func listsAddedSuccess(listsModelArray: [ListViewModel])
+  func listsAddedSuccess(listEntities: [Group])
   func listsAddedFailed()
 }

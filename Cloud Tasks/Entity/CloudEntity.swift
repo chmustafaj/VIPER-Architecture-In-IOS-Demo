@@ -6,7 +6,7 @@
 //
 
 import Foundation
-struct Todo: Codable {
+struct TodoEntity: Codable {
   let id: Int
   let todo: String
   var completed: Bool
@@ -14,12 +14,8 @@ struct Todo: Codable {
 }
 
 struct TodosResponse: Codable {
-  let todos: [Todo]
+  let todos: [TodoEntity]
   let total: Int
   let skip: Int
   let limit: Int
-  
-  func toToDoModels() -> [ToDoModel] {
-    return todos.map { ToDoModel(todo: $0.todo, isComplete: $0.completed) }
-  }
 }

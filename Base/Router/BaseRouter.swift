@@ -22,7 +22,7 @@ class BaseRouter: BasePresenterToRouterProtocol {
   func createModule() -> BaseViewController {
     let view = BaseViewController()
     let presenter: BaseViewToPresenterProtocol & BaseInteractorToPresenterProtocol = BasePresenter()
-    let interactor: BasePresenterToInteractorProtocol = BaseInteractor()
+    let interactor: BasePresenterToInteractorProtocol = BaseInteractor(dataManager: DataManager())
     let router: BasePresenterToRouterProtocol = BaseRouter()
     view.presenter = presenter
     presenter.view = view

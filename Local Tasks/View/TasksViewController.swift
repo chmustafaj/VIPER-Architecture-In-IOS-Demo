@@ -12,7 +12,6 @@ class TasksViewController: UIViewController {
   // MARK: - Variables
   var presentor:LocalViewToPresenterProtocol?
   private var tasks = [TaskViewModel]()
-  private let listId: String?
   
   // MARK: - UI Elements
   private lazy var activityIndicator: UIActivityIndicatorView = {
@@ -40,20 +39,12 @@ class TasksViewController: UIViewController {
   var tasksArrayList = [Task]()
   
   // MARK: - Lifecycle Methods
-  init(models: [Group] = [Group](), listId: String?) {
-    self.listId = listId
-    super.init(nibName: nil, bundle: nil)
-  }
-  
-  required init?(coder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
   override func viewDidLoad() {
     super.viewDidLoad()
     setupTableView()
     setupUI()
     self.title = "Tasks"
-    presentor?.startFetchingToDos(selectedListId: listId!)
+    presentor?.startFetchingToDos()
     showProgressIndicator()
   }
   
@@ -77,15 +68,14 @@ class TasksViewController: UIViewController {
   }
   
   @objc func presentEntryViewController() {
-    presentor?.startLoadingEnterTaskScreen(listToAddTaskToId: listId!) {
-      self.presentor?.startFetchingToDos(selectedListId: self.listId!)  // fetch the list again, and it will be updated
+    presentor?.startLoadingEnterTaskScreen() {
+      self.presentor?.startFetchingToDos()  // fetch the list again, and it will be updated
     }
   }
 }
 
 extension TasksViewController: LocalPresenterToViewProtocol {
   func showTasks(tasksArray: [TaskViewModel]) {
-    print("List: \(String(describing: listId))")
     print("Tasks: \(String(describing: tasksArray))")
     tasks = tasksArray
     DispatchQueue.main.async {

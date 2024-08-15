@@ -11,18 +11,18 @@ class EnterTaskPresenter: EnterTaskViewToPresenterProtocol {
   weak var view: EnterTaskPresenterToViewProtocol?
   var interactor: EnterTaskPresenterToInteractorProtocol?
   var router: EnterTaskPresenterToRouterProtocol?
+  let listId: String
   
-  func startAddingTaskToList(listId: String, taskName: String) {
-    interactor?.addTaskToList(listId: listId, taskName: taskName)
+  init(listId: String) {
+    self.listId = listId
   }
-}
-
-extension EnterTaskPresenter: EnterTaskInteractorToPresenterProtocol {
-  func taskAddedSuccess() {
-    view?.showTaskAdded()
-  }
-  
-  func taskAddedFailed() {
-    view?.showError()
+  func startAddingTaskToList(taskName: String) {
+    interactor?.addTaskToList(listWeAreAddingTaskTo:listId, taskName: taskName) { [self] isSuccesfull in
+      if(isSuccesfull){
+        view?.showTaskAdded()
+      }else{
+        view?.showError()
+      }
+    }
   }
 }

@@ -7,16 +7,17 @@
 
 import Foundation
 import UIKit
+import CoreData
 
 protocol LocalViewToPresenterProtocol: AnyObject{
   
   var view: LocalPresenterToViewProtocol? {get set}
   var interactor: LocalPresenterToInteractorProtocol? {get set}
   var router: LocalPresenterToRouterProtocol? {get set}
-  func startFetchingToDos(selectedListId: String)
+  func startFetchingToDos()
   func deleteItemRequested(taskToDeleteId: String)
   func toggleTaskIsCompleteRequest(taskToToggleId: String, isComplete: Bool)
-  func startLoadingEnterTaskScreen(listToAddTaskToId: String, update: @escaping (()->Void))
+  func startLoadingEnterTaskScreen(update: @escaping (()->Void))
 }
 
 
@@ -32,14 +33,17 @@ protocol LocalPresenterToRouterProtocol: AnyObject {
 }
 
 protocol LocalPresenterToInteractorProtocol: AnyObject {
-  var presenter:LocalInteractorToPresenterProtocol? {get set}
-  func fetchTasks(listId: String)
+  func fetchTasks(listId: String, handleResult: @escaping ([Task])->Void)
   func deleteTask(_ taskToDeleteId: String)
   func toggleTaskIsComplete(_ taskToToggleId: String, _ isComplete: Bool)
 }
 
-protocol LocalInteractorToPresenterProtocol: AnyObject {
-  func tasksFetchedSuccess(tasksModelArray: [TaskViewModel])
-  func tasksFetchFailed()
+protocol DataManagerProtocol {
+  var dataManagerContext: NSManagedObjectContext? {get}
+  func fetchAllTasks() -> [Task]?
+  func fetchLists() -> [Group]?
+  func deleteTask(taskToDelete: Task)
+  func toggleTaskIsComplete(task: Task, isComplete: Bool)
+  func addTask(taskName: String, listToAddTo: Group) -> Bool
 }
 

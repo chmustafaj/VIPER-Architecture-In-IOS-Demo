@@ -18,7 +18,7 @@ protocol CloudViewToPresenterProtocol: AnyObject{
 }
 
 protocol CloudPresenterToViewProtocol: AnyObject{
-  func showToDos(tasksArray: [ToDoModel])
+  func showToDos(tasksArray: [ToDoViewModel])
   func showError(error: AFError)
 }
 
@@ -27,5 +27,9 @@ protocol CloudPresenterToRouterProtocol: AnyObject {
 }
 
 protocol CloudPresenterToInteractorProtocol: AnyObject {
-  func fetchToDos(success: @escaping (Result)->Void)
+  func fetchToDos(handleResult: @escaping (MyResult)->Void)
+}
+
+protocol NetworkManagerProtocol {
+  func fetchData(from url: String, completion: @escaping (Result<TodosResponse, AFError>) -> Void)
 }

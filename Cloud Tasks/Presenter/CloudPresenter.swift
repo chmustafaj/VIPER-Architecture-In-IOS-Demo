@@ -14,13 +14,20 @@ class CloudPresenter: CloudViewToPresenterProtocol {
   var router: CloudPresenterToRouterProtocol?
   
   func startFetchingToDos() {
-    interactor?.fetchToDos() { result in
+    interactor?.fetchToDos() { result in  // result coming from the cloud interactor
       switch(result) {
-      case .success(let models):
-        self.view?.showToDos(tasksArray: models)
+      case .success(let entities):
+        let viewModels = self.convertEntitiesToViewModels(entities: entities)
+        self.view?.showToDos(tasksArray: viewModels)
       case .failure(let error):
         self.view?.showError(error: error)
       }
     }
+  }
+}
+// MARK: - Helper functions
+extension CloudPresenter {
+  func convertEntitiesToViewModels(entities: [TodoEntity]) -> [ToDoViewModel] {
+    return entities.map { ToDoViewModel(todo: $0.todo, isComplete: $0.completed) }
   }
 }

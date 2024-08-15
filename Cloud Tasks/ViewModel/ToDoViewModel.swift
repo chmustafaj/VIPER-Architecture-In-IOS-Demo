@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ToDoModel {
+struct ToDoViewModel {
   var todo: String
   var isComplete: Bool
 }

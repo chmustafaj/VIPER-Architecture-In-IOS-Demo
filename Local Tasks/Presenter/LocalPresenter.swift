@@ -13,10 +13,23 @@ class LocalPresenter: LocalViewToPresenterProtocol {
   weak var view: LocalPresenterToViewProtocol?
   var interactor: LocalPresenterToInteractorProtocol?
   var router: LocalPresenterToRouterProtocol?
+  let listId: String
   
-  func startFetchingToDos(selectedListId: String) {
-    interactor?.fetchTasks(listId: selectedListId)
+  init(listId: String){
+    self.listId = listId
   }
+  
+  func startFetchingToDos() { // pass directly
+    interactor?.fetchTasks(listId: listId) { [self] entities in
+      if(entities.isEmpty == false) {
+        let taskViewModels = convertEntitiesToViewModels(taskEntities: entities)
+        view?.showTasks(tasksArray: taskViewModels)
+      }else {
+        view?.showError()
+      }
+    }
+  }
+  
   func deleteItemRequested(taskToDeleteId: String) {
     interactor?.deleteTask(taskToDeleteId)
   }
@@ -25,20 +38,20 @@ class LocalPresenter: LocalViewToPresenterProtocol {
     interactor?.toggleTaskIsComplete(taskToToggleId, isComplete)
   }
   
-  func startLoadingEnterTaskScreen(listToAddTaskToId: String, update: @escaping (()->Void)) {
-    router?.createEntryModule(listToAddTaskToId: listToAddTaskToId, update: update)
-  }
-  
-}
-
-extension LocalPresenter: LocalInteractorToPresenterProtocol{
-  func tasksFetchedSuccess(tasksModelArray: [TaskViewModel]) {
-    view?.showTasks(tasksArray: tasksModelArray)
-  }
-  
-  func tasksFetchFailed() {
-    view?.showError()
+  func startLoadingEnterTaskScreen(update: @escaping (()->Void)) {
+    router?.createEntryModule(listToAddTaskToId: listId, update: update)
   }
 }
 
+// MARK: - Helper Functions
+extension LocalPresenter {
+  func convertEntitiesToViewModels(taskEntities: [Task]) -> [TaskViewModel] {
+    var taskViewModels = [TaskViewModel]()
+    for task in taskEntities {
+      let taskVM = TaskViewModel(name: task.name!, isComplete: task.isComplete)
+      taskViewModels.append(taskVM)
+    }
+    return taskViewModels
+  }
+}
 

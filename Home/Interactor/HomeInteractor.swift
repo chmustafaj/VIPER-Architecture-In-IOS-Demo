@@ -6,18 +6,21 @@
 //
 
 import Foundation
-
 class HomeInteractor: HomePresenterToInteractorProtocol {
-  weak var presenter: HomeInteractorToPresenterProtocol?
+
+  private let dataManager: DataManagerProtocol
   
-  func fetchList() {
+  init(dataManager: DataManagerProtocol){
+    self.dataManager = dataManager
+  }
+  
+  func fetchList(handleResult: @escaping ([Group])->Void) {
     do {
       print("Getting data")
-      let groups = try NetworkManager.networkManagerContext.fetch(Group.fetchRequest())
-      let ListViewModels = toListViewModels(groups: groups)
-      presenter?.listsFetchedSuccess(listsModelArray: ListViewModels)
+      let groups = try dataManager.dataManagerContext!.fetch(Group.fetchRequest())
+      handleResult(groups)
     } catch {
-      presenter?.listsFetchedFailed(error: "Cannot get data")
+      handleResult([Group]())
       print("Cannot get data")
     }
   }
@@ -25,42 +28,20 @@ class HomeInteractor: HomePresenterToInteractorProtocol {
   func deleteListItem(listItemId: String) {
     do {
       print("Getting data")
-      let groups = try NetworkManager.networkManagerContext.fetch(Group.fetchRequest())
+      let groups = try dataManager.dataManagerContext!.fetch(Group.fetchRequest())
       for group in groups {
         if(group.name == listItemId){
-          NetworkManager.networkManagerContext.delete(group)
+          dataManager.dataManagerContext!.delete(group)
           do {
-            try NetworkManager.networkManagerContext.save()
+            try dataManager.dataManagerContext!.save()
           } catch {
             print("Error saving")
           }
         }
       }
     }catch {
-      presenter?.listsFetchedFailed(error: "Cannot get data")
       print("Cannot get data")
     }
   }
 }
 
-extension HomeInteractor {
-  
-  func toListViewModels( groups: [Group] ) -> [ListViewModel] {
-    var listViewModels = [ListViewModel]()
-    for group in groups {
-      var listVM = ListViewModel()
-      if let groupName = group.name {
-        listVM.name = groupName
-        if let groupTasks = group.tasks as? Set<Task> {
-          listVM.tasks = groupTasks
-        }else{
-          debugPrint("Group tasks are nil!")
-        }
-      }else{
-        debugPrint("Group name is nil!")
-      }
-      listViewModels.append(listVM)
-    }
-    return listViewModels
-  }
-}

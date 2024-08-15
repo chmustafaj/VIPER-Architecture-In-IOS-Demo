@@ -18,16 +18,15 @@ class LocalRouter:LocalPresenterToRouterProtocol {
   }
   
   func createModule(selectedGroupId: String) -> TasksViewController {
-    let view = TasksViewController(listId: selectedGroupId)
-    let presenter: LocalViewToPresenterProtocol & LocalInteractorToPresenterProtocol = LocalPresenter()
-    let interactor: LocalPresenterToInteractorProtocol = LocalInteractor()
+    let view = TasksViewController()
+    let presenter: LocalViewToPresenterProtocol = LocalPresenter(listId: selectedGroupId)
+    let interactor: LocalPresenterToInteractorProtocol = LocalInteractor(dataManager: DataManager())
     let router:LocalPresenterToRouterProtocol = LocalRouter()
     view.presentor = presenter
     router.viewController = view
     presenter.view = view
     presenter.router = router
     presenter.interactor = interactor
-    interactor.presenter = presenter
     return view
   }
   

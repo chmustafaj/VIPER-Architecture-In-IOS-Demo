@@ -12,10 +12,10 @@ class CloudViewController: UIViewController {
   // MARK: - Variables
   var presentor: CloudViewToPresenterProtocol?
 
-  private var todos = [ToDoModel]()
+  private var todos = [ToDoViewModel]()
   // MARK: - UI Elements
   
-  lazy var activityIndicator: UIActivityIndicatorView = {
+  private lazy var activityIndicator: UIActivityIndicatorView = {
     var indicator = UIActivityIndicatorView()
     indicator = UIActivityIndicatorView(style: .large)
     indicator.center = view.center
@@ -69,7 +69,7 @@ class CloudViewController: UIViewController {
 }
 
 extension CloudViewController: CloudPresenterToViewProtocol {
-  func showToDos(tasksArray: Array<ToDoModel>) {
+  func showToDos(tasksArray: [ToDoViewModel]) {
     self.todos = tasksArray
     print(todos)
     DispatchQueue.main.async {

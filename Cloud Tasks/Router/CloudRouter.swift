@@ -14,7 +14,7 @@ class CloudRouter: CloudPresenterToRouterProtocol {
    func createModule() -> CloudViewController {
     let view = CloudViewController()
     let presenter: CloudViewToPresenterProtocol = CloudPresenter()
-    let interactor: CloudPresenterToInteractorProtocol = CloudInteractor()
+    let interactor: CloudPresenterToInteractorProtocol = CloudInteractor(networkManager: NetworkManager())
     view.presentor = presenter
     presenter.view = view
     presenter.router = self

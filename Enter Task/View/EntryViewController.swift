@@ -11,7 +11,6 @@ class EntryViewController: UIViewController {
   // MARK: - Variables
   
   var update: (() -> Void)?
-  private var listId: String?
   var presenter: EnterTaskViewToPresenterProtocol?
   // MARK: - UI Elements
   
@@ -29,9 +28,8 @@ class EntryViewController: UIViewController {
   }()
   
   // MARK: - Lifecycle
-  init(update: (() -> Void)? = nil, listToAddTaskToId: String) {
+  init(update: (() -> Void)? = nil) {
     self.update = update
-    self.listId = listToAddTaskToId
     super.init(nibName: nil, bundle: nil)
   }
   
@@ -41,8 +39,6 @@ class EntryViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     setupUI()
-    field.delegate.self
-    
   }
   
   // MARK: - Methods
@@ -64,7 +60,7 @@ class EntryViewController: UIViewController {
     guard let text = field.text, !text.isEmpty else {
       return
     }
-    presenter?.startAddingTaskToList(listId: listId!, taskName: text)
+    presenter?.startAddingTaskToList(taskName: text)
     self.navigationController?.popViewController(animated: true)
   }
 }

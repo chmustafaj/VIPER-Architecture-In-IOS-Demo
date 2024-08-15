@@ -6,43 +6,33 @@
 //
 
 import Foundation
-
 class EnterTaskInteractor: EnterTaskPresenterToInteractorProtocol {
-  weak var presenter: EnterTaskInteractorToPresenterProtocol?
+
+  private let dataManager: DataManagerProtocol
   
-  func addTaskToList(listId: String, taskName: String) {
-    var taskToSave = Task(context: NetworkManager.networkManagerContext)
-    taskToSave.name = taskName
-    taskToSave.isComplete = false
-    taskToSave.group = getGroupFromId(listId: listId)
-    taskToSave.createdAt = Date()
-    do{
-      try NetworkManager.networkManagerContext.save()
-    }
-    catch {
-      presenter?.taskAddedFailed()
-      print("error saving")
-    }
-    presenter?.taskAddedSuccess()
+  init(dataManager: DataManagerProtocol) {
+    self.dataManager = dataManager
+  }
+  func addTaskToList(listWeAreAddingTaskTo: String, taskName: String, resultHandler: (Bool)->Void) {
+    let group = getGroupFromId(listId: listWeAreAddingTaskTo)
+    resultHandler(dataManager.addTask(taskName: taskName, listToAddTo: group!))
   }
 }
 
+// MARK: - Helper functions
 extension EnterTaskInteractor {
-  func getGroupFromId(listId: String) -> Group{
-    do{
-      print("getting data")
-      let allLists = try NetworkManager.networkManagerContext.fetch(Group.fetchRequest())
+  func getGroupFromId(listId: String) -> Group? {
+    print("getting data")
+    if let allLists = dataManager.fetchLists(){
       print(allLists)
       for list in allLists {
         if(list.name == listId){
           return list
         }
       }
+    }else{
+      return nil
     }
-    catch {
-      print("Cannot get data")
-      self.presenter?.taskAddedFailed()
-    }
-    return Group()
+    return nil
   }
 }

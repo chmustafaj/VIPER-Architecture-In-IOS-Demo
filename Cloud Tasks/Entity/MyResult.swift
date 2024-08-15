@@ -7,7 +7,7 @@
 
 import Alamofire
 
-enum Result {
-    case success([ToDoModel])
+enum MyResult {
+    case success([TodoEntity])
     case failure(AFError)
 }
