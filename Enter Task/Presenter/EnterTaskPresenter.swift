@@ -16,6 +16,7 @@ class EnterTaskPresenter: EnterTaskViewToPresenterProtocol {
   init(listId: String) {
     self.listId = listId
   }
+  
   func startAddingTaskToList(taskName: String) {
     interactor?.addTaskToList(listWeAreAddingTaskTo:listId, taskName: taskName) { [self] isSuccesfull in
       if(isSuccesfull){
