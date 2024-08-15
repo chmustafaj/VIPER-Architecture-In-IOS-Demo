@@ -10,8 +10,7 @@ import Alamofire
 
 class CloudViewController: UIViewController {
   // MARK: - Variables
-  var presentor: CloudViewToPresenterProtocol?
-
+  var interactor: CloudSceneInteractorInput?
   private var todos = [ToDoViewModel]()
   // MARK: - UI Elements
   
@@ -38,7 +37,7 @@ class CloudViewController: UIViewController {
     
     setupUI()
     setupTableView()
-    presentor?.startFetchingToDos()
+    interactor?.tryFetchingTodos()
     showProgressIndicator()
   }
   
@@ -68,7 +67,7 @@ class CloudViewController: UIViewController {
   }
 }
 
-extension CloudViewController: CloudPresenterToViewProtocol {
+extension CloudViewController: CloudSceneViewControllerInput {
   func showToDos(tasksArray: [ToDoViewModel]) {
     self.todos = tasksArray
     print(todos)
@@ -83,6 +82,7 @@ extension CloudViewController: CloudPresenterToViewProtocol {
     hideProgressIndicator()
   }
 }
+
 extension CloudViewController: UITableViewDelegate, UITableViewDataSource, TaskCellDelegate {
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     return self.todos.count

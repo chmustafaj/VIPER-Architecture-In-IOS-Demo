@@ -9,7 +9,7 @@ import Foundation
 class EnterTaskInteractor: EnterTaskPresenterToInteractorProtocol {
 
   private let dataManager: DataManagerProtocol
-  
+  private let homedataWorker = HomeDataWorker()
   init(dataManager: DataManagerProtocol) {
     self.dataManager = dataManager
   }
@@ -23,7 +23,7 @@ class EnterTaskInteractor: EnterTaskPresenterToInteractorProtocol {
 extension EnterTaskInteractor {
   func getGroupFromId(listId: String) -> Group? {
     print("getting data")
-    if let allLists = dataManager.fetchLists(){
+    if let allLists = homedataWorker.fetchLists(){
       print(allLists)
       for list in allLists {
         if(list.name == listId){

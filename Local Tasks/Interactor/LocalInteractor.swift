@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 class LocalInteractor: LocalPresenterToInteractorProtocol{
-  
+  private let homeDataWorker = HomeDataWorker()
   private let dataManager: DataManagerProtocol
   private var tasks = [Task]()
   // Dependency injection: We are expecting a Protocol, but we are passing an implementation from the initialiser
@@ -47,7 +47,7 @@ class LocalInteractor: LocalPresenterToInteractorProtocol{
 // MARK: - Helper functions
 extension LocalInteractor {
   func getListFromId(id: String) -> Group? {
-    if let allLists = dataManager.fetchLists() {
+    if let allLists = homeDataWorker.fetchLists() {
       print(allLists)
       for list in allLists {
         if(list.name == id){

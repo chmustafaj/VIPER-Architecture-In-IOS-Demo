@@ -58,17 +58,4 @@ class DataManager: DataManagerProtocol {
       return nil
     }
   }
-  
-  func fetchLists() -> [Group]? {
-    do{
-      print("getting data")
-      let allLists = try dataManagerContext!.fetch(Group.fetchRequest())
-      return allLists
-    }catch {
-      debugPrint("Error")
-      return nil
-    }
-  }
-
-  
 }

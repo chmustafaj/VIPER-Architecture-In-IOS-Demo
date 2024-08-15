@@ -7,30 +7,16 @@
 
 import Foundation
 
-class HomePresenter: HomeViewToPresenterProtocol {
-  func startLoadingTasksScreen(listId: String) {
-    router?.startLoadingTasksScreen(listId: listId)
+class HomePresenter: HomeScenePresenterInput {
+
+  weak var viewController: HomeScenePresenterOutput?
+
+  func showListEntities(listsArray: [Group]) {
+    viewController?.showLists(listsArray: convertEntityToViewModel(groupEntites: listsArray))
   }
   
-  weak var view: HomePresenterToViewProtocol?
-  
-  var interactor: HomePresenterToInteractorProtocol?
-  
-  var router: HomePresenterToRouterProtocol?
-  
-  func startFetchingList() {
-    interactor?.fetchList() { listsEntities in
-      if listsEntities.isEmpty == false {
-        let listViewModels = self.convertEntityToViewModel(groupEntites: listsEntities)
-        self.view?.showLists(listsArray: listViewModels)
-      }else{
-        self.view?.showError()
-      }
-    }
-  }
-  
-  func startDeletingListItem(id: String) {
-    interactor?.deleteListItem(listItemId: id)
+  func showError() {
+    viewController?.showError()
   }
 }
 

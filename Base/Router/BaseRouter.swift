@@ -12,11 +12,12 @@ class BaseRouter: BasePresenterToRouterProtocol {
   weak var viewController: UIViewController?
 
   func createHomeViewController() -> HomeViewController {
-    return HomeRouter().createModule()
+    let sceneFactory = DefaultSceneFactory()
+    return DefualtHomeSceneConfigurator(sceneFactory: sceneFactory).configured(HomeViewController())
   }
   
   func createCloudViewController() -> CloudViewController {
-    return CloudRouter().createModule()
+    return DefultCloudSceneConfigurator().configured(CloudViewController()) 
   }
   
   func createModule() -> BaseViewController {

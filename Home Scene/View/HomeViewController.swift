@@ -11,8 +11,8 @@ import UIKit
 class HomeViewController: UIViewController {
   // MARK: - Variables
   private var models = [ListViewModel]()
-  var presenter: HomeViewToPresenterProtocol?
-  
+  var interactor: HomeSceneInteractorInput?
+  var router: HomeSceneRoutingLogic?
   // MARK: - UI Elements
   private let tableView: UITableView = {
     let tb = UITableView()
@@ -28,7 +28,7 @@ class HomeViewController: UIViewController {
     super.viewDidLoad()
     setupUI()
     setupTableView()
-    presenter?.startFetchingList()
+    interactor?.startFetchingList()
   }
   
   // MARK: - Methods
@@ -56,7 +56,7 @@ class HomeViewController: UIViewController {
   }
 }
 
-extension HomeViewController: HomePresenterToViewProtocol {
+extension HomeViewController: HomeSceneViewControllerInput {
   func showLists(listsArray: [ListViewModel]) {
     models = listsArray
     DispatchQueue.main.async {
@@ -84,7 +84,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
   func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
     if editingStyle == .delete {
       let listToDelete = models[indexPath.row]
-      presenter?.startDeletingListItem(id: listToDelete.name)
+      interactor?.startDeletingListItem(id: listToDelete.name)
       models.remove(at: indexPath.row)
       tableView.deleteRows(at: [indexPath], with: .automatic)
     }
@@ -92,7 +92,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
   
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     let selectedList = models[indexPath.row]
-    presenter?.startLoadingTasksScreen(listId: selectedList.name)
+    router?.startLoadingTasksScreen(listId: selectedList.name)
 
   }
 }

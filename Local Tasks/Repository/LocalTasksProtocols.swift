@@ -41,7 +41,6 @@ protocol LocalPresenterToInteractorProtocol: AnyObject {
 protocol DataManagerProtocol {
   var dataManagerContext: NSManagedObjectContext? {get}
   func fetchAllTasks() -> [Task]?
-  func fetchLists() -> [Group]?
   func deleteTask(taskToDelete: Task)
   func toggleTaskIsComplete(task: Task, isComplete: Bool)
   func addTask(taskName: String, listToAddTo: Group) -> Bool
