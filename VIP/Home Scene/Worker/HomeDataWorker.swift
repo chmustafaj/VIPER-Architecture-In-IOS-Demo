@@ -10,6 +10,7 @@ import CoreData
 import UIKit
 
 class HomeDataWorker: HomeSceneFetchingDataLogic {
+  
   var dataWorkerContext: NSManagedObjectContext? = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
   func fetchLists() -> [Group]? {

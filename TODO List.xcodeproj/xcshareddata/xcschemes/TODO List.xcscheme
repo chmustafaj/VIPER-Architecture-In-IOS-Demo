@@ -27,12 +27,19 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES"
-      shouldAutocreateTestPlan = "YES">
+      shouldUseLaunchSchemeArgsEnv = "YES">
+      <TestPlans>
+         <TestPlanReference
+            reference = "container:../TODO List.xctestplan"
+            default = "YES">
+         </TestPlanReference>
+         <TestPlanReference
+            reference = "container:TODO ListCloudTests">
+         </TestPlanReference>
+      </TestPlans>
       <Testables>
          <TestableReference
-            skipped = "NO"
-            parallelizable = "YES">
+            skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "4E3F70EE2C60A34A00DF844C"
@@ -49,6 +56,17 @@
                BlueprintIdentifier = "4E3F70F82C60A34A00DF844C"
                BuildableName = "TODO ListUITests.xctest"
                BlueprintName = "TODO ListUITests"
+               ReferencedContainer = "container:TODO List.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "4EC88E8B2C73214500A95579"
+               BuildableName = "TODO ListCloudTests.xctest"
+               BlueprintName = "TODO ListCloudTests"
                ReferencedContainer = "container:TODO List.xcodeproj">
             </BuildableReference>
          </TestableReference>

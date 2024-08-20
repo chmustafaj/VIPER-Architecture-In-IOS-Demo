@@ -17,4 +17,10 @@ pod 'Alamofire'
     # Pods for testing
   end
 
+  target 'TODO ListCloudTests' do
+  inherit! :search_paths
+  pod 'Alamofire'
+  end
+
+
 end

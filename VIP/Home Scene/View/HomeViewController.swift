@@ -28,6 +28,10 @@ class HomeViewController: UIViewController {
     super.viewDidLoad()
     setupUI()
     setupTableView()
+    fetchLists()
+  }
+  
+  func fetchLists() {
     interactor?.startFetchingList()
   }
   
@@ -93,6 +97,5 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     let selectedList = models[indexPath.row]
     router?.startLoadingTasksScreen(listId: selectedList.name)
-
   }
 }

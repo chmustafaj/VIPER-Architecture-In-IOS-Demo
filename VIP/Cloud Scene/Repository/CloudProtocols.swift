@@ -24,6 +24,8 @@ protocol CloudSceneInteractorOutput: AnyObject {
 // MARK: - Worker
 protocol CloudSceneFetchingNetworkLogic {
   func fetchTasks(from url: String, completion: @escaping (Result<TodosResponse, AFError>) -> Void)
+  var resultToReturn: Result<TodosResponse, AFError>! {get set}
+  var fetchTasksCalled: Bool! {get set}
 }
 
 protocol CloudSceneConfigurator {

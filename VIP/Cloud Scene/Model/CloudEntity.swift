@@ -6,7 +6,7 @@
 //
 
 import Foundation
-struct TodoEntity: Codable {
+struct TodoEntity: Codable, Equatable {
   let id: Int
   let todo: String
   var completed: Bool
